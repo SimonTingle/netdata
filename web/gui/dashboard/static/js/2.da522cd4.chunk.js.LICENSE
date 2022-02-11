@@ -46,6 +46,12 @@ and limitations under the License.
  * THE SOFTWARE.
  */
 
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -164,12 +170,6 @@ PERFORMANCE OF THIS SOFTWARE.
  * Copyright 2011 Robert Konigsberg (konigsberg@google.com)
  * MIT-licensed (http://opensource.org/licenses/MIT)
  */
-
-/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
 
 /**!
  * easy-pie-chart
