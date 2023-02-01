@@ -51886,9 +51886,9 @@ end_deserialize:
 /*
 ** Return true if the VFS is the memvfs.
 */
-SQLITE_PRIVATE int sqlite3IsMemdb(const sqlite3_vfs *pVfs){
-  return pVfs==&memdb_vfs;
-}
+//SQLITE_PRIVATE int sqlite3IsMemdb(const sqlite3_vfs *pVfs){
+//  return pVfs==&memdb_vfs;
+//}
 
 /*
 ** This routine is called when the extension is loaded.
