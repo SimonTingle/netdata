@@ -18592,44 +18592,6 @@ export const integrations = [
     {
         "meta": {
             "plugin_name": "python.d.plugin",
-            "module_name": "hddtemp",
-            "monitored_instance": {
-                "name": "HDD temperature",
-                "link": "https://linux.die.net/man/8/hddtemp",
-                "categories": [
-                    "data-collection.hardware-devices-and-sensors"
-                ],
-                "icon_filename": "hard-drive.svg"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "hardware",
-                "hdd temperature",
-                "disk temperature",
-                "temperature"
-            ],
-            "most_popular": false
-        },
-        "overview": "# HDD temperature\n\nPlugin: python.d.plugin\nModule: hddtemp\n\n## Overview\n\nThis collector monitors disk temperatures.\n\n\nIt uses the `hddtemp` daemon to gather the metrics.\n\n\nThis collector is only supported on the following platforms:\n\n- Linux\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nBy default, this collector will attempt to connect to the `hddtemp` daemon on `127.0.0.1:7634`\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\n#### Run `hddtemp` in daemon mode\n\nYou can execute `hddtemp` in TCP/IP daemon mode by using the `-d` argument.\n\nSo running `hddtemp -d` would run the daemon, by default on port 7634.\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/hddtemp.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](https://github.com/netdata/netdata/blob/master/docs/netdata-agent/configuration.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/hddtemp.conf\n```\n#### Options\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.\n\nAdditionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\nBy default this collector will try to autodetect disks (autodetection works only for disk which names start with \"sd\"). However this can be overridden by setting the option `disks` to an array of desired disks.\n\n\n{% details summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Sets the default data collection frequency. | 1 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n| name | Job name. This value will overwrite the `job_name` value. JOBS with the same name are mutually exclusive. Only one of them will be allowed running at any time. This allows autodetection to try several alternatives and pick the one that works. | local | no |\n| devices | Array of desired disks to detect, in case their name doesn't start with `sd`. |  | no |\n| host | The IP or HOSTNAME to connect to. | localhost | yes |\n| port | The port to connect to. | 7634 | no |\n\n{% /details %}\n#### Examples\n\n##### Basic\n\nA basic example configuration.\n\n```yaml\nlocalhost:\n  name: 'local'\n  host: '127.0.0.1'\n  port: 7634\n\n```\n##### Custom disk names\n\nAn example defining the disk names to detect.\n\n{% details summary=\"Config\" %}\n```yaml\nlocalhost:\n  name: 'local'\n  host: '127.0.0.1'\n  port: 7634\n  devices:\n    - customdisk1\n    - customdisk2\n\n```\n{% /details %}\n##### Multi-instance\n\n> **Note**: When you define multiple jobs, their names must be unique.\n\nCollecting metrics from local and remote instances.\n\n\n{% details summary=\"Config\" %}\n```yaml\nlocalhost:\n  name: 'local'\n  host: '127.0.0.1'\n  port: 7634\n\nremote_job:\n  name : 'remote'\n  host  : 'http://192.0.2.1:2812'\n\n```\n{% /details %}\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `hddtemp` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin hddtemp debug trace\n  ```\n\n",
-        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per HDD temperature instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| hddtemp.temperatures | a dimension per disk | Celsius |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-hddtemp-HDD_temperature",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/hddtemp/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "python.d.plugin",
             "module_name": "hpssa",
             "monitored_instance": {
                 "name": "HP Smart Storage Arrays",
