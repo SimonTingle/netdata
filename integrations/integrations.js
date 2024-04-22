@@ -19222,48 +19222,6 @@ export const integrations = [
     {
         "meta": {
             "plugin_name": "python.d.plugin",
-            "module_name": "sensors",
-            "monitored_instance": {
-                "name": "Linux Sensors (lm-sensors)",
-                "link": "https://hwmon.wiki.kernel.org/lm_sensors",
-                "categories": [
-                    "data-collection.hardware-devices-and-sensors"
-                ],
-                "icon_filename": "microchip.svg"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "sensors",
-                "temperature",
-                "voltage",
-                "current",
-                "power",
-                "fan",
-                "energy",
-                "humidity"
-            ],
-            "most_popular": false
-        },
-        "overview": "# Linux Sensors (lm-sensors)\n\nPlugin: python.d.plugin\nModule: sensors\n\n## Overview\n\nExamine Linux Sensors metrics with Netdata for insights into hardware health and performance.\n\nEnhance your system's reliability with real-time hardware health insights.\n\n\nReads system sensors information (temperature, voltage, electric current, power, etc.) via [lm-sensors](https://hwmon.wiki.kernel.org/lm_sensors).\n\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThe following type of sensors are auto-detected:\n- temperature - fan - voltage - current - power - energy - humidity\n\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/sensors.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](https://github.com/netdata/netdata/blob/master/docs/netdata-agent/configuration.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/sensors.conf\n```\n#### Options\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.\n\nAdditionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\n\n{% details summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| types | The types of sensors to collect. | temperature, fan, voltage, current, power, energy, humidity | yes |\n| update_every | Sets the default data collection frequency. | 1 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n\n{% /details %}\n#### Examples\n\n##### Default\n\nDefault configuration.\n\n```yaml\ntypes:\n  - temperature\n  - fan\n  - voltage\n  - current\n  - power\n  - energy\n  - humidity\n\n```\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `sensors` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin sensors debug trace\n  ```\n\n### lm-sensors doesn't work on your device\n\n\n\n### ACPI ring buffer errors are printed\n\n\n\n",
-        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per chip\n\nMetrics related to chips. Each chip provides a set of the following metrics, each having the chip name in the metric name as reported by `sensors -u`.\n\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| sensors.temperature | a dimension per sensor | Celsius |\n| sensors.voltage | a dimension per sensor | Volts |\n| sensors.current | a dimension per sensor | Ampere |\n| sensors.power | a dimension per sensor | Watt |\n| sensors.fan | a dimension per sensor | Rotations/min |\n| sensors.energy | a dimension per sensor | Joule |\n| sensors.humidity | a dimension per sensor | Percent |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-sensors-Linux_Sensors_(lm-sensors)",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/sensors/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "python.d.plugin",
             "module_name": "smartd_log",
             "monitored_instance": {
                 "name": "S.M.A.R.T.",
