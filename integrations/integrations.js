@@ -15754,6 +15754,49 @@ export const integrations = [
     },
     {
         "meta": {
+            "id": "collector-go.d.plugin-sensors",
+            "plugin_name": "go.d.plugin",
+            "module_name": "sensors",
+            "monitored_instance": {
+                "name": "Linux Sensors (lm-sensors)",
+                "link": "https://hwmon.wiki.kernel.org/lm_sensors",
+                "icon_filename": "microchip.svg",
+                "categories": [
+                    "data-collection.hardware-devices-and-sensors"
+                ]
+            },
+            "keywords": [
+                "sensors",
+                "temperature",
+                "voltage",
+                "current",
+                "power",
+                "fan",
+                "energy",
+                "humidity"
+            ],
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "most_popular": false
+        },
+        "overview": "# Linux Sensors (lm-sensors)\n\nPlugin: go.d.plugin\nModule: sensors\n\n## Overview\n\nThis collector gathers real-time system sensor statistics,  including temperature, voltage, current, power, fan speed, energy consumption, and humidity,  utilizing the [sensors](https://linux.die.net/man/1/sensors) binary.\n\n\n\n\nThis collector is supported on all platforms.\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThe following type of sensors are auto-detected:\n\n- temperature\n- fan\n- voltage\n- current\n- power\n- energy\n- humidity\n\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\n#### Install lm-sensors\n\n- Install `lm-sensors` using your distribution's package manager.\n- Run `sensors-detect` to detect hardware monitoring chips.\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/sensors.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](https://github.com/netdata/netdata/blob/master/docs/netdata-agent/configuration.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/sensors.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every.\n\n\n{% details summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 10 | no |\n| binary_path | Path to the `sensors` binary. If an absolute path is provided, the collector will use it directly; otherwise, it will search for the binary in directories specified in the PATH environment variable. | /usr/bin/sensors | yes |\n| timeout | Timeout for executing the binary, specified in seconds. | 2 | no |\n\n{% /details %}\n#### Examples\n\n##### Custom binary path\n\nThe executable is not in the directories specified in the PATH environment variable.\n\n{% details summary=\"Config\" %}\n```yaml\njobs:\n  - name: sensors\n    binary_path: /usr/local/sbin/sensors\n\n```\n{% /details %}\n",
+        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `sensors` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m sensors\n  ```\n\n",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per sensor\n\nThese metrics refer to the sensor.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| chip | The hardware component responsible for the sensor monitoring. |\n| feature | The specific sensor or monitoring point provided by the chip. |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| sensors.sensor_temperature | temperature | Celsius |\n| sensors.sensor_voltage | voltage | Volts |\n| sensors.sensor_current | current | Amperes |\n| sensors.sensor_power | power | Watts |\n| sensors.sensor_fan_speed | fan | RPM |\n| sensors.sensor_energy | energy | Joules |\n| sensors.sensor_humidity | humidity | percent |\n\n",
+        "integration_type": "collector",
+        "id": "go.d.plugin-sensors-Linux_Sensors_(lm-sensors)",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/collectors/go.d.plugin/modules/sensors/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
             "id": "collector-go.d.plugin-snmp",
             "plugin_name": "go.d.plugin",
             "module_name": "snmp",
