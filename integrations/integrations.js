@@ -4299,6 +4299,46 @@ export const integrations = [
     },
     {
         "meta": {
+            "id": "collector-go.d.plugin-hpssa",
+            "plugin_name": "go.d.plugin",
+            "module_name": "hpssa",
+            "monitored_instance": {
+                "name": "HPE Smart Arrays",
+                "link": "https://buy.hpe.com/us/en/options/controller-controller-options/smart-array-controllers-smart-host-bus-adapters/c/7109730",
+                "icon_filename": "hp.svg",
+                "categories": [
+                    "data-collection.storage-mount-points-and-filesystems"
+                ]
+            },
+            "keywords": [
+                "storage",
+                "raid-controller",
+                "hp",
+                "hpssa",
+                "array"
+            ],
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "most_popular": false
+        },
+        "overview": "# HPE Smart Arrays\n\nPlugin: go.d.plugin\nModule: hpssa\n\n## Overview\n\nMonitors the health of HPE Smart Arrays by tracking the status of controllers, arrays, logical and physical drives in your storage system.\nIt relies on the `ssacli` CLI tool but avoids directly executing the binary.\nInstead, it utilizes `ndsudo`, a Netdata helper specifically designed to run privileged commands securely within the Netdata environment.\nThis approach eliminates the need to use `sudo`, improving security and potentially simplifying permission management.\n\nExecuted commands:\n-  `ssacli ctrl all show config detail`\n\n\n\n\nThis collector is supported on all platforms.\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThis integration doesn't support auto-detection.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\n#### Install ssacli\n\nSee [official installation instructions](https://support.hpe.com/connect/s/softwaredetails?language=en_US&collectionId=MTX-0cb3f808e2514d3d).\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/ssacli.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](https://github.com/netdata/netdata/blob/master/docs/netdata-agent/configuration.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/ssacli.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every.\n\n\n{% details summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 10 | no |\n| timeout | ssacli binary execution timeout. | 2 | no |\n\n{% /details %}\n#### Examples\n\n##### Custom update_every\n\nAllows you to override the default data collection interval.\n\n{% details summary=\"Config\" %}\n```yaml\njobs:\n  - name: hpssa\n    update_every: 5  # Collect HPE Smart Array statistics every 5 seconds\n\n```\n{% /details %}\n",
+        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `hpssa` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m hpssa\n  ```\n\n",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per controller\n\nThese metrics refer to the Controller.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| slot | Slot number |\n| model | Controller model |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| hpssa.controller_status | ok, nok | status |\n| hpssa.controller_temperature | temperature | Celsius |\n| hpssa.controller_cache_module_presence_status | present, not_present | status |\n| hpssa.controller_cache_module_status | ok, nok | status |\n| hpssa.controller_cache_module_temperature | temperature | Celsius |\n| hpssa.controller_cache_module_battery status | ok, nok | status |\n\n### Per array\n\nThese metrics refer to the Array.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| slot | Slot number |\n| array_id | Array id |\n| interface_type | Array interface type (e.g. SATA) |\n| array_type | Array type (e.g. Data) |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| hpssa.array_status | ok, nok | status |\n\n### Per logical drive\n\nThese metrics refer to the Logical Drive.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| slot | Slot number |\n| array_id | Array id |\n| logical_drive_id | Logical Drive id (number) |\n| disk_name | Disk name (e.g. /dev/sda) |\n| drive_type | Drive type (e.g. Data) |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| hpssa.logical_drive_status | ok, nok | status |\n\n### Per physical drive\n\nThese metrics refer to the Physical Drive.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| slot | Slot number |\n| array_id | Array id or \"na\" if unassigned |\n| logical_drive_id | Logical Drive id or \"na\" if unassigned |\n| location | Drive location in port:box:bay format (e.g. 1I:1:1) |\n| interface_type | Drive interface type (e.g. SATA) |\n| drive_type | Drive type (e.g. Data Drive, Unassigned Drive) |\n| model | Drive model |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| hpssa.physical_drive_status | ok, nok | status |\n| hpssa.physical_drive_temperature | temperature | status |\n\n",
+        "integration_type": "collector",
+        "id": "go.d.plugin-hpssa-HPE_Smart_Arrays",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/collectors/go.d.plugin/modules/hpssa/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
             "id": "collector-go.d.plugin-httpcheck",
             "plugin_name": "go.d.plugin",
             "module_name": "httpcheck",
@@ -18633,44 +18673,6 @@ export const integrations = [
         "integration_type": "collector",
         "id": "python.d.plugin-go_expvar-Go_applications_(EXPVAR)",
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/go_expvar/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "python.d.plugin",
-            "module_name": "hpssa",
-            "monitored_instance": {
-                "name": "HP Smart Storage Arrays",
-                "link": "https://buy.hpe.com/us/en/software/server-management-software/server-management-software/smart-array-management-software/hpe-smart-storage-administrator/p/5409020",
-                "categories": [
-                    "data-collection.storage-mount-points-and-filesystems"
-                ],
-                "icon_filename": "hp.svg"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "storage",
-                "hp",
-                "hpssa",
-                "array"
-            ],
-            "most_popular": false
-        },
-        "overview": "# HP Smart Storage Arrays\n\nPlugin: python.d.plugin\nModule: hpssa\n\n## Overview\n\nThis collector monitors HP Smart Storage Arrays metrics about operational statuses and temperatures.\n\nIt uses the command line tool `ssacli`. The exact command used is `sudo -n ssacli ctrl all show config detail`\n\nThis collector is supported on all platforms.\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nIf no configuration is provided, the collector will try to execute the `ssacli` binary.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\n#### Enable the hpssa collector\n\nThe `hpssa` collector is disabled by default. To enable it, use `edit-config` from the Netdata [config directory](https://github.com/netdata/netdata/blob/master/docs/netdata-agent/configuration.md), which is typically at `/etc/netdata`, to edit the `python.d.conf` file.\n\n```bash\ncd /etc/netdata   # Replace this path with your Netdata config directory, if different\nsudo ./edit-config python.d.conf\n```\n\nChange the value of the `hpssa` setting to `yes`. Save the file and restart the Netdata Agent with `sudo systemctl restart netdata`, or the [appropriate method](https://github.com/netdata/netdata/blob/master/packaging/installer/README.md#maintaining-a-netdata-agent-installation) for your system.\n\n\n#### Allow user netdata to execute `ssacli` as root.\n\nThis module uses `ssacli`, which can only be executed by root. It uses `sudo` and assumes that it is configured such that the `netdata` user can execute `ssacli` as root without a password.\n\n- Add to your `/etc/sudoers` file:\n\n`which ssacli` shows the full path to the binary.\n\n```bash\nnetdata ALL=(root)       NOPASSWD: /path/to/ssacli\n```\n\n- Reset Netdata's systemd\n  unit [CapabilityBoundingSet](https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Capabilities) (Linux\n  distributions with systemd)\n\nThe default CapabilityBoundingSet doesn't allow using `sudo`, and is quite strict in general. Resetting is not optimal, but a next-best solution given the inability to execute `ssacli` using `sudo`.\n\nAs the `root` user, do the following:\n\n```cmd\nmkdir /etc/systemd/system/netdata.service.d\necho -e '[Service]\\nCapabilityBoundingSet=~' | tee /etc/systemd/system/netdata.service.d/unset-capability-bounding-set.conf\nsystemctl daemon-reload\nsystemctl restart netdata.service\n```\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/hpssa.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](https://github.com/netdata/netdata/blob/master/docs/netdata-agent/configuration.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/hpssa.conf\n```\n#### Options\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.\n\nAdditionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\n\n{% details summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Sets the default data collection frequency. | 5 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n| name | Job name. This value will overwrite the `job_name` value. JOBS with the same name are mutually exclusive. Only one of them will be allowed running at any time. This allows autodetection to try several alternatives and pick the one that works. |  | no |\n| ssacli_path | Path to the `ssacli` command line utility. Configure this if `ssacli` is not in the $PATH |  | no |\n| use_sudo | Whether or not to use `sudo` to execute `ssacli` | True | no |\n\n{% /details %}\n#### Examples\n\n##### Local simple config\n\nA basic configuration, specyfing the path to `ssacli`\n\n```yaml\nlocal:\n ssacli_path: /usr/sbin/ssacli\n\n```\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `hpssa` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin hpssa debug trace\n  ```\n\n",
-        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per HP Smart Storage Arrays instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| hpssa.ctrl_status | ctrl_{adapter slot}_status, cache_{adapter slot}_status, battery_{adapter slot}_status per adapter | Status |\n| hpssa.ctrl_temperature | ctrl_{adapter slot}_temperature, cache_{adapter slot}_temperature per adapter | Celsius |\n| hpssa.ld_status | a dimension per logical drive | Status |\n| hpssa.pd_status | a dimension per physical drive | Status |\n| hpssa.pd_temperature | a dimension per physical drive | Celsius |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-hpssa-HP_Smart_Storage_Arrays",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/hpssa/metadata.yaml",
         "related_resources": ""
     },
     {
