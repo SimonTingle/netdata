@@ -15800,6 +15800,54 @@ export const integrations = [
     },
     {
         "meta": {
+            "id": "collector-go.d.plugin-rspamd",
+            "plugin_name": "go.d.plugin",
+            "module_name": "rspamd",
+            "monitored_instance": {
+                "name": "Rspamd",
+                "link": "https://rspamd.com/",
+                "categories": [
+                    "data-collection.security-systems"
+                ],
+                "icon_filename": "globe.svg"
+            },
+            "related_resources": {
+                "integrations": {
+                    "list": [
+                        {
+                            "plugin_name": "go.d.plugin",
+                            "module_name": "httpcheck"
+                        },
+                        {
+                            "plugin_name": "apps.plugin",
+                            "module_name": "apps"
+                        }
+                    ]
+                }
+            },
+            "alternative_monitored_instances": [],
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "keywords": [
+                "spam",
+                "rspamd",
+                "email"
+            ],
+            "most_popular": false
+        },
+        "overview": "# Rspamd\n\nPlugin: go.d.plugin\nModule: rspamd\n\n## Overview\n\nThis collector monitors the activity and performance of Rspamd servers. It gathers various metrics including scanned emails, learned messages, spam/ham counts, and actions taken on emails (reject, rewrite, etc.).\n\n\nIt retrieves statistics from Rspamd's [built-in web server](https://rspamd.com/doc/workers/controller.html) by making HTTP requests to the `/stat` endpoint.\n\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nBy default, it detects Rspamd instances running on localhost that are listening on port 11334.\n\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/rspamd.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](https://github.com/netdata/netdata/blob/master/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/rspamd.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every, autodetection_retry.\n\n\n{% details summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 1 | no |\n| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | no |\n| url | Server URL. | http://127.0.0.1:11334 | yes |\n| timeout | HTTP request timeout. | 1 | no |\n| username | Username for basic HTTP authentication. |  | no |\n| password | Password for basic HTTP authentication. |  | no |\n| proxy_url | Proxy URL. |  | no |\n| proxy_username | Username for proxy basic HTTP authentication. |  | no |\n| proxy_password | Password for proxy basic HTTP authentication. |  | no |\n| method | HTTP request method. | GET | no |\n| body | HTTP request body. |  | no |\n| headers | HTTP request headers. |  | no |\n| not_follow_redirects | Redirect handling policy. Controls whether the client follows redirects. | no | no |\n| tls_skip_verify | Server certificate chain and hostname validation policy. Controls whether the client performs this check. | no | no |\n| tls_ca | Certification authority that the client uses when verifying the server's certificates. |  | no |\n| tls_cert | Client TLS certificate. |  | no |\n| tls_key | Client TLS key. |  | no |\n\n{% /details %}\n#### Examples\n\n##### Basic\n\nA basic example configuration.\n\n```yaml\njobs:\n  - name: local\n    url: http://127.0.0.1:11334\n\n```\n##### HTTP authentication\n\nBasic HTTP authentication.\n\n{% details summary=\"Config\" %}\n```yaml\njobs:\n  - name: local\n    url: http://127.0.0.1:11334\n    username: username\n    password: password\n\n```\n{% /details %}\n##### Multi-instance\n\n> **Note**: When you define multiple jobs, their names must be unique.\n\nCollecting metrics from local and remote instances.\n\n\n{% details summary=\"Config\" %}\n```yaml\njobs:\n  - name: local\n    url: http://127.0.0.1:11334\n\n  - name: remote\n    url: http://192.0.2.1:11334\n\n```\n{% /details %}\n",
+        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `rspamd` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m rspamd\n  ```\n\n",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Rspamd instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| rspamd.classifications | ham, spam | messages/s |\n| rspamd.actions | reject, soft_reject, rewrite_subject, add_header, greylist, custom, discard, quarantine, no_action | messages/s |\n| rspamd.scans | scanned | messages/s |\n| rspamd.learns | learned | messages/s |\n| rspamd.connections | connections | connections/s |\n| rspamd.control_connections | control_connections | connections/s |\n\n",
+        "integration_type": "collector",
+        "id": "go.d.plugin-rspamd-Rspamd",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/collectors/go.d.plugin/modules/rspamd/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
             "id": "collector-go.d.plugin-scaleio",
             "plugin_name": "go.d.plugin",
             "module_name": "scaleio",
