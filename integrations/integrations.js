@@ -4485,6 +4485,43 @@ export const integrations = [
     },
     {
         "meta": {
+            "id": "collector-go.d.plugin-ipfs",
+            "plugin_name": "go.d.plugin",
+            "module_name": "ipfs",
+            "monitored_instance": {
+                "name": "IPFS",
+                "link": "https://ipfs.tech/",
+                "categories": [
+                    "data-collection.storage-mount-points-and-filesystems"
+                ],
+                "icon_filename": "ipfs.svg"
+            },
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "keywords": [
+                "ipfs",
+                "filesystem"
+            ],
+            "most_popular": false
+        },
+        "overview": "# IPFS\n\nPlugin: go.d.plugin\nModule: ipfs\n\n## Overview\n\nThis collector monitors IPFS daemon health and network activity.\n\nIt uses [RPC API](https://docs.ipfs.tech/reference/kubo/rpc/) to collect metrics.\n\nUsed endpoints:\n\n- [/api/v0/stats/bw](https://docs.ipfs.tech/reference/kubo/rpc/#api-v0-stats-bw)\n- [/api/v0/swarm/peers](https://docs.ipfs.tech/reference/kubo/rpc/#api-v0-swarm-peers)\n- [/api/v0/stats/repo](https://docs.ipfs.tech/reference/kubo/rpc/#api-v0-stats-repo)\n- [/api/v0/pin/ls](https://docs.ipfs.tech/reference/kubo/rpc/#api-v0-pin-ls)\n\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nBy default, it detects IPFS instances running on localhost that are listening on port 5001.\n\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nCalls to the following endpoints are disabled by default due to IPFS bugs:\n\n- /api/v0/stats/repo ([#7528](https://github.com/ipfs/go-ipfs/issues/7528)).\n- /api/v0/pin/ls ([#3874](https://github.com/ipfs/go-ipfs/issues/3874)).\n\n**Disabled by default** due to potential high CPU usage. Consider enabling only if necessary.\n\n",
+        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/ipfs.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/ipfs.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every, autodetection_retry.\n\n\n{% details open=true summary=\"\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 1 | no |\n| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | no |\n| repoapi | Enables querying the [/api/v0/stats/repo](https://docs.ipfs.tech/reference/kubo/rpc/#api-v0-repo-stat) endpoint for repository statistics. | no | no |\n| pinapi | Enables querying the [/api/v0/pin/ls](https://docs.ipfs.tech/reference/kubo/rpc/#api-v0-pin-ls) endpoint to retrieve a list of all pinned objects. | no | no |\n| url | Server URL. | http://127.0.0.1:5001 | yes |\n| timeout | HTTP request timeout. | 1 | no |\n| username | Username for basic HTTP authentication. |  | no |\n| password | Password for basic HTTP authentication. |  | no |\n| proxy_url | Proxy URL. |  | no |\n| proxy_username | Username for proxy basic HTTP authentication. |  | no |\n| proxy_password | Password for proxy basic HTTP authentication. |  | no |\n| method | HTTP request method. | POST | no |\n| body | HTTP request body. |  | no |\n| headers | HTTP request headers. |  | no |\n| not_follow_redirects | Redirect handling policy. Controls whether the client follows redirects. | no | no |\n| tls_skip_verify | Server certificate chain and hostname validation policy. Controls whether the client performs this check. | no | no |\n| tls_ca | Certification authority that the client uses when verifying the server's certificates. |  | no |\n| tls_cert | Client TLS certificate. |  | no |\n| tls_key | Client TLS key. |  | no |\n\n{% /details %}\n#### Examples\n\n##### Basic\n\nA basic example configuration.\n\n```yaml\njobs:\n  - name: local\n    url: http://127.0.0.1:5001\n\n```\n##### Multi-instance\n\n> **Note**: When you define multiple jobs, their names must be unique.\n\nCollecting metrics from local and remote instances.\n\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: local\n    url: http://127.0.0.1:5001\n\n  - name: remote\n    url: http://192.0.2.1:5001\n\n```\n{% /details %}\n",
+        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `ipfs` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m ipfs\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `ipfs` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep ipfs\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep ipfs /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep ipfs\n```\n\n",
+        "alerts": "## Alerts\n\n\nThe following alerts are available:\n\n| Alert name  | On metric | Description |\n|:------------|:----------|:------------|\n| [ ipfs_datastore_usage ](https://github.com/netdata/netdata/blob/master/src/health/health.d/ipfs.conf) | ipfs.datastore_space_utilization | IPFS datastore utilization |\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per IPFS instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| ipfs.bandwidth | in, out | bytes/s |\n| ipfs.peers | peers | peers |\n| ipfs.repo_size | size | GiB |\n| ipfs.repo_objects | objects | objects |\n| ipfs.repo_pinned_objects | recursive_pins | objects |\n\n",
+        "integration_type": "collector",
+        "id": "go.d.plugin-ipfs-IPFS",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/plugin/go.d/modules/ipfs/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
             "id": "collector-go.d.plugin-isc_dhcpd",
             "plugin_name": "go.d.plugin",
             "module_name": "isc_dhcpd",
@@ -18835,39 +18872,6 @@ export const integrations = [
         "integration_type": "collector",
         "id": "python.d.plugin-icecast-Icecast",
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/icecast/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "python.d.plugin",
-            "module_name": "ipfs",
-            "monitored_instance": {
-                "name": "IPFS",
-                "link": "https://ipfs.tech/",
-                "categories": [
-                    "data-collection.storage-mount-points-and-filesystems"
-                ],
-                "icon_filename": "ipfs.svg"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [],
-            "most_popular": false
-        },
-        "overview": "# IPFS\n\nPlugin: python.d.plugin\nModule: ipfs\n\n## Overview\n\nThis collector monitors IPFS server metrics about its quality and performance.\n\nIt connects to an http endpoint of the IPFS server to collect the metrics\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nIf the endpoint is accessible by the Agent, netdata will autodetect it\n\n#### Limits\n\nCalls to the following endpoints are disabled due to IPFS bugs:\n\n/api/v0/stats/repo (https://github.com/ipfs/go-ipfs/issues/3874)\n/api/v0/pin/ls (https://github.com/ipfs/go-ipfs/issues/7528)\n\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/ipfs.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/ipfs.conf\n```\n#### Options\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.\n\nAdditionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\n\n{% details open=true summary=\"\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Sets the default data collection frequency. | 5 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n| name | The JOB's name as it will appear at the dashboard (by default is the job_name) | job_name | no |\n| url | URL to the IPFS API | no | yes |\n| repoapi | Collect repo metrics. | no | no |\n| pinapi | Set status of IPFS pinned object polling. | no | no |\n\n{% /details %}\n#### Examples\n\n##### Basic (default out-of-the-box)\n\nA basic example configuration, one job will run at a time. Autodetect mechanism uses it by default.\n\n```yaml\nlocalhost:\n  name: 'local'\n  url: 'http://localhost:5001'\n  repoapi: no\n  pinapi: no\n\n```\n##### Multi-instance\n\n> **Note**: When you define multiple jobs, their names must be unique.\n\nCollecting metrics from local and remote instances.\n\n\n{% details open=true summary=\"Config\" %}\n```yaml\nlocalhost:\n  name: 'local'\n  url: 'http://localhost:5001'\n  repoapi: no\n  pinapi: no\n\nremote_host:\n  name: 'remote'\n  url: 'http://192.0.2.1:5001'\n  repoapi: no\n  pinapi: no\n\n```\n{% /details %}\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `ipfs` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin ipfs debug trace\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `ipfs` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep ipfs\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep ipfs /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep ipfs\n```\n\n",
-        "alerts": "## Alerts\n\n\nThe following alerts are available:\n\n| Alert name  | On metric | Description |\n|:------------|:----------|:------------|\n| [ ipfs_datastore_usage ](https://github.com/netdata/netdata/blob/master/src/health/health.d/ipfs.conf) | ipfs.repo_size | IPFS datastore utilization |\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per IPFS instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| ipfs.bandwidth | in, out | kilobits/s |\n| ipfs.peers | peers | peers |\n| ipfs.repo_size | avail, size | GiB |\n| ipfs.repo_objects | objects, pinned, recursive_pins | objects |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-ipfs-IPFS",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/ipfs/metadata.yaml",
         "related_resources": ""
     },
     {
