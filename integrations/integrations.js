@@ -15827,6 +15827,42 @@ export const integrations = [
     },
     {
         "meta": {
+            "id": "collector-go.d.plugin-puppet",
+            "plugin_name": "go.d.plugin",
+            "module_name": "puppet",
+            "monitored_instance": {
+                "name": "Puppet",
+                "link": "https://www.puppet.com/",
+                "categories": [
+                    "data-collection.ci-cd-systems"
+                ],
+                "icon_filename": "puppet.svg"
+            },
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "keywords": [
+                "puppet"
+            ],
+            "most_popular": false
+        },
+        "overview": "# Puppet\n\nPlugin: go.d.plugin\nModule: puppet\n\n## Overview\n\nThis collector monitors Puppet metrics, including JVM heap and non-heap memory, CPU usage, and file descriptors.\n\n\nIt uses Puppet's metrics API endpoint [/status/v1/services](https://www.puppet.com/docs/puppetserver/5.3/status-api/v1/services.html) to gather the metrics.\n\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nBy default, it detects Puppet instances running on localhost that are listening on port 8140.\nOn startup, it tries to collect metrics from:\n\n- https://127.0.0.1:8140\n\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/puppet.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/puppet.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every, autodetection_retry.\n\n\n{% details open=true summary=\"\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| url | The base URL where the Puppet instance can be accessed. | https://127.0.0.1:8140 | yes |\n| timeout | HTTPS request timeout. | 1 | no |\n| username | Username for basic HTTPS authentication. |  | no |\n| password | Password for basic HTTPS authentication. |  | no |\n| proxy_url | Proxy URL. |  | no |\n| proxy_username | Username for proxy basic HTTPS authentication. |  | no |\n| proxy_password | Password for proxy basic HTTPS authentication. |  | no |\n| method | HTTPS request method. | POST | no |\n| body | HTTPS request body. |  | no |\n| headers | HTTPS request headers. |  | no |\n| not_follow_redirects | Redirect handling policy. Controls whether the client follows redirects. | no | no |\n| tls_skip_verify | Server certificate chain and hostname validation policy. Controls whether the client performs this check. | no | no |\n| tls_ca | Certification authority that the client uses when verifying the server's certificates. |  | no |\n| tls_cert | Client TLS certificate. |  | no |\n| tls_key | Client TLS key. |  | no |\n\n{% /details %}\n#### Examples\n\n##### Basic with self-signed certificate\n\nPuppet with self-signed TLS certificate.\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: local\n    url: https://127.0.0.1:8140\n    tls_skip_verify: yes\n\n```\n{% /details %}\n##### Multi-instance\n\n> **Note**: When you define multiple jobs, their names must be unique.\n\nCollecting metrics from local and remote instances.\n\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: local\n    url: https://127.0.0.1:8140\n    tls_skip_verify: yes\n\n  - name: remote\n    url: https://192.0.2.1:8140\n    tls_skip_verify: yes\n\n```\n{% /details %}\n",
+        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `puppet` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m puppet\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `puppet` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep puppet\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep puppet /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep puppet\n```\n\n",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Puppet instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| puppet.jvm_heap | committed, used | MiB |\n| puppet.jvm_nonheap | committed, used | MiB |\n| puppet.cpu | execution, GC | percentage |\n| puppet.fdopen | used | descriptors |\n\n",
+        "integration_type": "collector",
+        "id": "go.d.plugin-puppet-Puppet",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/plugin/go.d/modules/puppet/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
             "id": "collector-go.d.plugin-rabbitmq",
             "plugin_name": "go.d.plugin",
             "module_name": "rabbitmq",
@@ -19095,42 +19131,6 @@ export const integrations = [
         "integration_type": "collector",
         "id": "python.d.plugin-pandas-Pandas",
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/pandas/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "python.d.plugin",
-            "module_name": "puppet",
-            "monitored_instance": {
-                "name": "Puppet",
-                "link": "https://www.puppet.com/",
-                "categories": [
-                    "data-collection.ci-cd-systems"
-                ],
-                "icon_filename": "puppet.svg"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "puppet",
-                "jvm heap"
-            ],
-            "most_popular": false
-        },
-        "overview": "# Puppet\n\nPlugin: python.d.plugin\nModule: puppet\n\n## Overview\n\nThis collector monitors Puppet metrics about JVM Heap, Non-Heap, CPU usage and file descriptors.'\n\n\nIt uses Puppet's metrics API endpoint to gather the metrics.\n\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nBy default, this collector will use `https://fqdn.example.com:8140` as the URL to look for metrics.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/puppet.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/puppet.conf\n```\n#### Options\n\nThis particular collector does not need further configuration to work if permissions are satisfied, but you can always customize it's data collection behavior.\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.\n\nAdditionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\n> Notes:\n> - Exact Fully Qualified Domain Name of the node should be used.\n> - Usually Puppet Server/DB startup time is VERY long. So, there should be quite reasonable retry count.\n> - A secured PuppetDB config may require a client certificate. This does not apply to the default PuppetDB configuration though.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| url | HTTP or HTTPS URL, exact Fully Qualified Domain Name of the node should be used. | https://fqdn.example.com:8081 | yes |\n| tls_verify | Control HTTPS server certificate verification. | False | no |\n| tls_ca_file | Optional CA (bundle) file to use |  | no |\n| tls_cert_file | Optional client certificate file |  | no |\n| tls_key_file | Optional client key file |  | no |\n| update_every | Sets the default data collection frequency. | 30 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n| name | Job name. This value will overwrite the `job_name` value. JOBS with the same name are mutually exclusive. Only one of them will be allowed running at any time. This allows autodetection to try several alternatives and pick the one that works. |  | no |\n\n{% /details %}\n#### Examples\n\n##### Basic\n\nA basic example configuration\n\n```yaml\npuppetserver:\n  url: 'https://fqdn.example.com:8140'\n  autodetection_retry: 1\n\n```\n##### TLS Certificate\n\nAn example using a TLS certificate\n\n{% details open=true summary=\"Config\" %}\n```yaml\npuppetdb:\n  url: 'https://fqdn.example.com:8081'\n  tls_cert_file: /path/to/client.crt\n  tls_key_file: /path/to/client.key\n  autodetection_retry: 1\n\n```\n{% /details %}\n##### Multi-instance\n\n> **Note**: When you define multiple jobs, their names must be unique.\n\nCollecting metrics from local and remote instances.\n\n\n{% details open=true summary=\"Config\" %}\n```yaml\npuppetserver1:\n  url: 'https://fqdn.example.com:8140'\n  autodetection_retry: 1\n\npuppetserver2:\n  url: 'https://fqdn.example2.com:8140'\n  autodetection_retry: 1\n\n```\n{% /details %}\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `puppet` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin puppet debug trace\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `puppet` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep puppet\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep puppet /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep puppet\n```\n\n",
-        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Puppet instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| puppet.jvm_heap | committed, used | MiB |\n| puppet.jvm_nonheap | committed, used | MiB |\n| puppet.cpu | execution, GC | percentage |\n| puppet.fdopen | used | descriptors |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-puppet-Puppet",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/puppet/metadata.yaml",
         "related_resources": ""
     },
     {
