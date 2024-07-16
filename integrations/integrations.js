@@ -1016,45 +1016,6 @@ export const integrations = [
     {
         "meta": {
             "plugin_name": "charts.d.plugin",
-            "module_name": "ap",
-            "monitored_instance": {
-                "name": "Access Points",
-                "link": "",
-                "categories": [
-                    "data-collection.linux-systems.network-metrics"
-                ],
-                "icon_filename": "network-wired.svg"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "ap",
-                "access",
-                "point",
-                "wireless",
-                "network"
-            ],
-            "most_popular": false
-        },
-        "overview": "# Access Points\n\nPlugin: charts.d.plugin\nModule: ap\n\n## Overview\n\nThe ap collector visualizes data related to wireless access points.\n\nIt uses the `iw` command line utility to detect access points. For each interface that is of `type AP`, it then runs `iw INTERFACE station dump` and collects statistics.\n\nThis collector is only supported on the following platforms:\n\n- Linux\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThe plugin is able to auto-detect if you are running access points on your linux box.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\n#### Install charts.d plugin\n\nIf [using our official native DEB/RPM packages](/packaging/installer/UPDATE.md#determine-which-installation-method-you-used), make sure `netdata-plugin-chartsd` is installed.\n\n\n#### `iw` utility.\n\nMake sure the `iw` utility is installed.\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `charts.d/ap.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config charts.d/ap.conf\n```\n#### Options\n\nThe config file is sourced by the charts.d plugin. It's a standard bash file.\n\nThe following collapsed table contains all the options that can be configured for the ap collector.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| ap_update_every | The data collection frequency. If unset, will inherit the netdata update frequency. | 1 | no |\n| ap_priority | Controls the order of charts at the netdata dashboard. | 6900 | no |\n| ap_retries | The number of retries to do in case of failure before disabling the collector. | 10 | no |\n\n{% /details %}\n#### Examples\n\n##### Change the collection frequency\n\nSpecify a custom collection frequence (update_every) for this collector\n\n```yaml\n# the data collection frequency\n# if unset, will inherit the netdata update frequency\nap_update_every=10\n\n# the charts priority on the dashboard\n#ap_priority=6900\n\n# the number of retries to do in case of failure\n# before disabling the module\n#ap_retries=10\n\n```\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `ap` collector, run the `charts.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `charts.d.plugin` to debug the collector:\n\n  ```bash\n  ./charts.d.plugin debug 1 ap\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `ap` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep ap\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep ap /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep ap\n```\n\n",
-        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per wireless device\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| ap.clients | clients | clients |\n| ap.net | received, sent | kilobits/s |\n| ap.packets | received, sent | packets/s |\n| ap.issues | retries, failures | issues/s |\n| ap.signal | average signal | dBm |\n| ap.bitrate | receive, transmit, expected | Mbps |\n\n",
-        "integration_type": "collector",
-        "id": "charts.d.plugin-ap-Access_Points",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/charts.d.plugin/ap/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "charts.d.plugin",
             "module_name": "apcupsd",
             "monitored_instance": {
                 "name": "APC UPS",
@@ -3230,6 +3191,45 @@ export const integrations = [
         "integration_type": "collector",
         "id": "go.d.plugin-adaptec_raid-Adaptec_RAID",
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/plugin/go.d/modules/adaptecraid/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
+            "plugin_name": "go.d.plugin",
+            "module_name": "ap",
+            "monitored_instance": {
+                "name": "Access Points",
+                "link": "",
+                "categories": [
+                    "data-collection.linux-systems.network-metrics"
+                ],
+                "icon_filename": "network-wired.svg"
+            },
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "keywords": [
+                "ap",
+                "access",
+                "point",
+                "wireless",
+                "network"
+            ],
+            "most_popular": false
+        },
+        "overview": "# Access Points\n\nPlugin: go.d.plugin\nModule: ap\n\n## Overview\n\nThe ap collector visualizes data related to wireless access points.\n\nIt uses the `iw` command line utility to detect access points. Initially, the `iw dev` command is run. For each interface that is found to be of `type AP`, `iw INTERFACE station dump` is executed to collect metrics.\n\nThis collector is only supported on the following platforms:\n\n- Linux\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThe plugin is able to auto-detect any access points on your Linux machine.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\n#### `iw` utility.\n\nMake sure the `iw` utility is installed.\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/ap.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/ap.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 10 | no |\n| binary_path | Path to the `iw` binary. If an absolute path is provided, the collector will use it directly; otherwise, it will search for the binary in directories specified in the PATH environment variable. | /usr/sbin/iw | yes |\n| timeout | Timeout for executing the binary, specified in seconds. | 2 | no |\n\n{% /details %}\n#### Examples\n\n##### Custom binary path\n\nThe executable is not in the directories specified in the PATH environment variable.\n\n```yaml\njobs:\n  - name: custom_iw\n    binary_path: /usr/local/sbin/iw\n\n```\n",
+        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `ap` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m ap\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `ap` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep ap\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep ap /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep ap\n```\n\n",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per wireless device\n\nThese metrics refer to the entire monitored application.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| device | Wireless interface name |\n| ssid | SSID |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| ap.clients | clients | clients |\n| ap.net | received, sent | kilobits/s |\n| ap.packets | received, sent | packets/s |\n| ap.issues | retries, failures | issues/s |\n| ap.signal | average signal | dBm |\n| ap.bitrate | receive, transmit | Mbps |\n\n",
+        "integration_type": "collector",
+        "id": "go.d.plugin-ap-Access_Points",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/plugin/go.d/modules/ap/metadata.yaml",
         "related_resources": ""
     },
     {
@@ -5717,7 +5717,7 @@ export const integrations = [
             "most_popular": false
         },
         "overview": "# Postfix\n\nPlugin: go.d.plugin\nModule: postfix\n\n## Overview\n\nThis collector retrieves statistics about the Postfix mail queue using the [postqueue](https://www.postfix.org/postqueue.1.html) command-line tool.\n\n\nIt periodically executes the `postqueue -p` command. The collection interval is set to 10 seconds by default, but this can be configurable.\n\n\nThis collector is supported on all platforms.\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\nPostfix has internal access controls for the mail queue. By default, all users can view the queue. If your system has stricter controls, grant the `netdata` user access by adding it to `authorized_mailq_users` in the `/etc/postfix/main.cf `file. For more details, refer to the `authorized_mailq_users` setting in the [Postfix documentation](https://www.postfix.org/postconf.5.html).\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThe collector executes  `postqueue -p` to get Postfix queue statistics.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThere is no configuration file.\n#### Options\n\nThe following options can be defined globally: update_every.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 10 | no |\n| binary_path | Path to the `postqueue` binary. If an absolute path is provided, the collector will use it directly; otherwise, it will search for the binary in directories specified in the PATH environment variable. | /usr/sbin/postqueue | yes |\n| timeout | Timeout for executing the binary, specified in seconds. | 2 | no |\n\n{% /details %}\n#### Examples\nThere are no configuration examples.\n\n",
+        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/postfix.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/postfix.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 10 | no |\n| binary_path | Path to the `postqueue` binary. If an absolute path is provided, the collector will use it directly; otherwise, it will search for the binary in directories specified in the PATH environment variable. | /usr/sbin/postqueue | yes |\n| timeout | Timeout for executing the binary, specified in seconds. | 2 | no |\n\n{% /details %}\n#### Examples\n\n##### Custom binary path\n\nThe executable is not in the directories specified in the PATH environment variable.\n\n{% details open=true summary=\"\" %}\n```yaml\njobs:\n  - name: custom_path\n    binary_path: /usr/local/sbin/postqueue\n\n```\n{% /details %}\n",
         "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `postfix` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m postfix\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `postfix` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep postfix\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep postfix /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep postfix\n```\n\n",
         "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
         "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Postfix instance\n\nThese metrics refer to the entire monitored application.\n\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| postfix.qemails | emails | emails |\n| postfix.qsize | size | KiB |\n\n",
