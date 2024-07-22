@@ -4954,6 +4954,45 @@ export const integrations = [
     },
     {
         "meta": {
+            "id": "collector-go.d.plugin-memcached",
+            "plugin_name": "go.d.plugin",
+            "module_name": "memcached",
+            "monitored_instance": {
+                "name": "Memcached",
+                "link": "https://memcached.org/",
+                "categories": [
+                    "data-collection.database-servers"
+                ],
+                "icon_filename": "memcached.svg"
+            },
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "keywords": [
+                "memcached",
+                "memcache",
+                "cache",
+                "database"
+            ],
+            "most_popular": false
+        },
+        "overview": "# Memcached\n\nPlugin: go.d.plugin\nModule: memcached\n\n## Overview\n\nMonitor Memcached metrics for proficient in-memory key-value store operations. Track cache hits, misses, and memory usage for efficient data caching.\n\nIt reads the server's response to the `stats` command.\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nIf no configuration is given, collector will attempt to connect to memcached instance on `127.0.0.1:11211` address.\n\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/memcached.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/memcached.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every, autodetection_retry.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 1 | no |\n| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | no |\n| address | The IP address and port where the memcached service listens for connections. | 127.0.0.1:11211 | yes |\n| timeout | Connection, read, and write timeout duration in seconds. The timeout includes name resolution. | 1 | no |\n\n{% /details %}\n#### Examples\n\n##### Basic\n\nA basic example configuration.\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: local\n    address: 127.0.0.1:11211\n\n```\n{% /details %}\n##### Multi-instance\n\n> **Note**: When you define multiple jobs, their names must be unique.\n\nCollecting metrics from local and remote instances.\n\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: local\n    address: 127.0.0.1:11211\n\n  - name: remote\n    address: 203.0.113.0:11211\n\n```\n{% /details %}\n",
+        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `memcached` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m memcached\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `memcached` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep memcached\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep memcached /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep memcached\n```\n\n",
+        "alerts": "## Alerts\n\n\nThe following alerts are available:\n\n| Alert name  | On metric | Description |\n|:------------|:----------|:------------|\n| [ memcached_cache_memory_usage ](https://github.com/netdata/netdata/blob/master/src/health/health.d/memcached.conf) | memcached.cache | cache memory utilization |\n| [ memcached_cache_fill_rate ](https://github.com/netdata/netdata/blob/master/src/health/health.d/memcached.conf) | memcached.cache | average rate the cache fills up (positive), or frees up (negative) space over the last hour |\n| [ memcached_out_of_cache_space_time ](https://github.com/netdata/netdata/blob/master/src/health/health.d/memcached.conf) | memcached.cache | estimated time the cache will run out of space if the system continues to add data at the same rate as the past hour |\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Memcached instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| memcached.cache | available, used | MiB |\n| memcached.net | in, out | kilobits/s |\n| memcached.connections | current, rejected, total | connections/s |\n| memcached.items | current, total | items |\n| memcached.evicted_reclaimed | reclaimed, evicted | items |\n| memcached.get | hints, misses | requests |\n| memcached.get_rate | rate | requests/s |\n| memcached.set_rate | rate | requests/s |\n| memcached.delete | hits, misses | requests |\n| memcached.cas | hits, misses, bad value | requests |\n| memcached.increment | hits, misses | requests |\n| memcached.decrement | hits, misses | requests |\n| memcached.touch | hits, misses | requests |\n| memcached.touch_rate | rate | requests/s |\n\n",
+        "integration_type": "collector",
+        "id": "go.d.plugin-memcached-Memcached",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/plugin/go.d/modules/memcached/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
             "id": "collector-go.d.plugin-mongodb",
             "plugin_name": "go.d.plugin",
             "module_name": "mongodb",
@@ -18908,44 +18947,6 @@ export const integrations = [
         "integration_type": "collector",
         "id": "python.d.plugin-go_expvar-Go_applications_(EXPVAR)",
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/go_expvar/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "python.d.plugin",
-            "module_name": "memcached",
-            "monitored_instance": {
-                "name": "Memcached",
-                "link": "https://memcached.org/",
-                "categories": [
-                    "data-collection.database-servers"
-                ],
-                "icon_filename": "memcached.svg"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "memcached",
-                "memcache",
-                "cache",
-                "database"
-            ],
-            "most_popular": false
-        },
-        "overview": "# Memcached\n\nPlugin: python.d.plugin\nModule: memcached\n\n## Overview\n\nMonitor Memcached metrics for proficient in-memory key-value store operations. Track cache hits, misses, and memory usage for efficient data caching.\n\nIt reads server response to stats command ([stats interface](https://github.com/memcached/memcached/wiki/Commands#stats)).\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nIf no configuration is given, collector will attempt to connect to memcached instance on `127.0.0.1:11211` address.\n\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/memcached.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/memcached.conf\n```\n#### Options\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.\n\nAdditionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| host | the host to connect to. | 127.0.0.1 | no |\n| port | the port to connect to. | 11211 | no |\n| update_every | Sets the default data collection frequency. | 10 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n| name | Job name. This value will overwrite the `job_name` value. JOBS with the same name are mutually exclusive. Only one of them will be allowed running at any time. This allows autodetection to try several alternatives and pick the one that works. |  | no |\n\n{% /details %}\n#### Examples\n\n##### localhost\n\nAn example configuration for localhost.\n\n```yaml\nlocalhost:\n  name: 'local'\n  host: 'localhost'\n  port: 11211\n\n```\n##### localipv4\n\nAn example configuration for localipv4.\n\n{% details open=true summary=\"Config\" %}\n```yaml\nlocalhost:\n  name: 'local'\n  host: '127.0.0.1'\n  port: 11211\n\n```\n{% /details %}\n##### localipv6\n\nAn example configuration for localipv6.\n\n{% details open=true summary=\"Config\" %}\n```yaml\nlocalhost:\n  name: 'local'\n  host: '::1'\n  port: 11211\n\n```\n{% /details %}\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `memcached` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin memcached debug trace\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `memcached` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep memcached\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep memcached /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep memcached\n```\n\n",
-        "alerts": "## Alerts\n\n\nThe following alerts are available:\n\n| Alert name  | On metric | Description |\n|:------------|:----------|:------------|\n| [ memcached_cache_memory_usage ](https://github.com/netdata/netdata/blob/master/src/health/health.d/memcached.conf) | memcached.cache | cache memory utilization |\n| [ memcached_cache_fill_rate ](https://github.com/netdata/netdata/blob/master/src/health/health.d/memcached.conf) | memcached.cache | average rate the cache fills up (positive), or frees up (negative) space over the last hour |\n| [ memcached_out_of_cache_space_time ](https://github.com/netdata/netdata/blob/master/src/health/health.d/memcached.conf) | memcached.cache | estimated time the cache will run out of space if the system continues to add data at the same rate as the past hour |\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Memcached instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| memcached.cache | available, used | MiB |\n| memcached.net | in, out | kilobits/s |\n| memcached.connections | current, rejected, total | connections/s |\n| memcached.items | current, total | items |\n| memcached.evicted_reclaimed | reclaimed, evicted | items |\n| memcached.get | hints, misses | requests |\n| memcached.get_rate | rate | requests/s |\n| memcached.set_rate | rate | requests/s |\n| memcached.delete | hits, misses | requests |\n| memcached.cas | hits, misses, bad value | requests |\n| memcached.increment | hits, misses | requests |\n| memcached.decrement | hits, misses | requests |\n| memcached.touch | hits, misses | requests |\n| memcached.touch_rate | rate | requests/s |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-memcached-Memcached",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/memcached/metadata.yaml",
         "related_resources": ""
     },
     {
