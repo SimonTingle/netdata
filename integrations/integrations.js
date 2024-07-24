@@ -16410,6 +16410,46 @@ export const integrations = [
     },
     {
         "meta": {
+            "plugin_name": "go.d.plugin",
+            "module_name": "tomcat",
+            "monitored_instance": {
+                "name": "Tomcat",
+                "link": "https://tomcat.apache.org/",
+                "categories": [
+                    "data-collection.web-servers-and-web-proxies"
+                ],
+                "icon_filename": "tomcat.svg"
+            },
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "keywords": [
+                "apache",
+                "tomcat",
+                "webserver",
+                "websocket",
+                "jakarta",
+                "javaEE"
+            ],
+            "most_popular": false
+        },
+        "overview": "# Tomcat\n\nPlugin: go.d.plugin\nModule: tomcat\n\n## Overview\n\nThis collector monitors Tomcat metrics about bandwidth, processing time, threads and more.\n\n\nIt parses the information provided by the [Server Status](https://tomcat.apache.org/tomcat-10.0-doc/manager-howto.html#Server_Status) HTTP endpoint.\n\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\nBy default, this Tomcat collector cannot access the server's status page. To enable data collection, you will need to configure access credentials with appropriate permissions.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nIf the Netdata agent and Tomcat are on the same host, the collector will attempt to connect to the Tomcat server's status page at `http://localhost:8080/manager/status?XML=true`.\n\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\n#### Access to Tomcat Status Endpoint\n\nThe Netdata agent needs read-only access to its status endpoint to collect data from the Tomcat server.\n\nYou can achieve this by creating a dedicated user named `netdata` with read-only permissions specifically for accessing the [Server Status](https://tomcat.apache.org/tomcat-10.0-doc/manager-howto.html#Server_Status) endpoint.\n\nOnce you've created the `netdata` user, you'll need to configure the username and password in the collector configuration file.\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/tomcat.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/tomcat.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every, autodetection_retry.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 1 | no |\n| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | no |\n| url | Server URL. | http://127.0.0.1:8080 | yes |\n| timeout | HTTP request timeout. | 1 | no |\n| username | Username for basic HTTP authentication. |  | no |\n| password | Password for basic HTTP authentication. |  | no |\n| proxy_url | Proxy URL. |  | no |\n| proxy_username | Username for proxy basic HTTP authentication. |  | no |\n| proxy_password | Password for proxy basic HTTP authentication. |  | no |\n| method | HTTP request method. | POST | no |\n| body | HTTP request body. |  | no |\n| headers | HTTP request headers. |  | no |\n| not_follow_redirects | Redirect handling policy. Controls whether the client follows redirects. | no | no |\n| tls_skip_verify | Server certificate chain and hostname validation policy. Controls whether the client performs this check. | no | no |\n| tls_ca | Certification authority that the client uses when verifying the server's certificates. |  | no |\n| tls_cert | Client TLS certificate. |  | no |\n| tls_key | Client TLS key. |  | no |\n\n{% /details %}\n#### Examples\n\n##### Basic\n\nA basic example configuration.\n\n```yaml\njobs:\n  - name: local\n    url: http://127.0.0.1:8080\n    username: John\n    password: Doe\n\n```\n##### Multi-instance\n\n> **Note**: When you define multiple jobs, their names must be unique.\n\nCollecting metrics from local and remote instances.\n\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: local\n    url: http://127.0.0.1:8080\n    username: admin1\n    password: hackme1\n\n  - name: remote\n    url: http://192.0.2.1:8080\n    username: admin2\n    password: hackme2\n\n```\n{% /details %}\n",
+        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `tomcat` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m tomcat\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `tomcat` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep tomcat\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep tomcat /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep tomcat\n```\n\n",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Tomcat instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| tomcat.jvm_memory_usage | free, used | bytes |\n\n### Per jvm memory pool\n\nThese metrics refer to the JVM memory pool.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| mempool_name | Memory Pool name. |\n| mempool_type | Memory Pool type. |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| tomcat.jvm_mem_pool_memory_usage | commited, used, max | bytes |\n\n### Per connector\n\nThese metrics refer to the connector.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| connector_name | Connector name. |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| tomcat.connector_requests | requests | requests/s |\n| tomcat.connector_bandwidth | received, sent | bytes/s |\n| tomcat.connector_requests_processing_time | processing_time | milliseconds |\n| tomcat.connector_errors | errors | errors/s |\n| tomcat.connector_request_threads | idle, busy | threads |\n\n",
+        "integration_type": "collector",
+        "id": "go.d.plugin-tomcat-Tomcat",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/plugin/go.d/modules/tomcat/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
             "id": "collector-go.d.plugin-traefik",
             "plugin_name": "go.d.plugin",
             "module_name": "traefik",
@@ -19352,46 +19392,6 @@ export const integrations = [
         "integration_type": "collector",
         "id": "python.d.plugin-squid-Squid",
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/squid/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "python.d.plugin",
-            "module_name": "tomcat",
-            "monitored_instance": {
-                "name": "Tomcat",
-                "link": "https://tomcat.apache.org/",
-                "categories": [
-                    "data-collection.web-servers-and-web-proxies"
-                ],
-                "icon_filename": "tomcat.svg"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "apache",
-                "tomcat",
-                "webserver",
-                "websocket",
-                "jakarta",
-                "javaEE"
-            ],
-            "most_popular": false
-        },
-        "overview": "# Tomcat\n\nPlugin: python.d.plugin\nModule: tomcat\n\n## Overview\n\nThis collector monitors Tomcat metrics about bandwidth, processing time, threads and more.\n\n\nIt parses the information provided by the http endpoint of the `/manager/status` in XML format\n\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\nYou need to provide the username and the password, to access the webserver's status page. Create a seperate user with read only rights for this particular endpoint\n\n### Default Behavior\n\n#### Auto-Detection\n\nIf the Netdata Agent and the Tomcat webserver are in the same host, without configuration, module attempts to connect to http://localhost:8080/manager/status?XML=true, without any credentials. So it will probably fail.\n\n#### Limits\n\nThis module is not supporting SSL communication. If you want a Netdata Agent to monitor a Tomcat deployment, you shouldnt try to monitor it via public network (public internet). Credentials are passed by Netdata in an unsecure port\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\n#### Create a read-only `netdata` user, to monitor the `/status` endpoint.\n\nThis is necessary for configuring the collector.\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/tomcat.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/tomcat.conf\n```\n#### Options\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.Additionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\n\n{% details open=true summary=\"Config options per job\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Sets the default data collection frequency. | 5 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n| url | The URL of the Tomcat server's status endpoint. Always add the suffix ?XML=true. | no | yes |\n| user | A valid user with read permission to access the /manager/status endpoint of the server. Required if the endpoint is password protected | no | no |\n| pass | A valid password for the user in question. Required if the endpoint is password protected | no | no |\n| connector_name | The connector component that communicates with a web connector via the AJP protocol, e.g ajp-bio-8009 |  | no |\n\n{% /details %}\n#### Examples\n\n##### Basic\n\nA basic example configuration\n\n```yaml\nlocalhost:\n  name : 'local'\n  url  : 'http://localhost:8080/manager/status?XML=true'\n\n```\n##### Using an IPv4 endpoint\n\nA typical configuration using an IPv4 endpoint\n\n{% details open=true summary=\"Config\" %}\n```yaml\nlocal_ipv4:\n  name : 'local'\n  url  : 'http://127.0.0.1:8080/manager/status?XML=true'\n\n```\n{% /details %}\n##### Using an IPv6 endpoint\n\nA typical configuration using an IPv6 endpoint\n\n{% details open=true summary=\"Config\" %}\n```yaml\nlocal_ipv6:\n  name : 'local'\n  url  : 'http://[::1]:8080/manager/status?XML=true'\n\n```\n{% /details %}\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `tomcat` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin tomcat debug trace\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `tomcat` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep tomcat\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep tomcat /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep tomcat\n```\n\n",
-        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Tomcat instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| tomcat.accesses | accesses, errors | requests/s |\n| tomcat.bandwidth | sent, received | KiB/s |\n| tomcat.processing_time | processing time | seconds |\n| tomcat.threads | current, busy | current threads |\n| tomcat.jvm | free, eden, survivor, tenured, code cache, compressed, metaspace | MiB |\n| tomcat.jvm_eden | used, committed, max | MiB |\n| tomcat.jvm_survivor | used, committed, max | MiB |\n| tomcat.jvm_tenured | used, committed, max | MiB |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-tomcat-Tomcat",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/tomcat/metadata.yaml",
         "related_resources": ""
     },
     {
