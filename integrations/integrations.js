@@ -5402,6 +5402,43 @@ export const integrations = [
     },
     {
         "meta": {
+            "id": "collector-go.d.plugin-nsd",
+            "plugin_name": "go.d.plugin",
+            "module_name": "nsd",
+            "monitored_instance": {
+                "name": "NSD",
+                "link": "https://nsd.docs.nlnetlabs.nl/en/latest",
+                "icon_filename": "nsd.svg",
+                "categories": [
+                    "data-collection.dns-and-dhcp-servers"
+                ]
+            },
+            "keywords": [
+                "nsd",
+                "dns"
+            ],
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "most_popular": false
+        },
+        "overview": "# NSD\n\nPlugin: go.d.plugin\nModule: nsd\n\n## Overview\n\nThis collector monitors NSD statistics like queries, zones, protocols, query types and more. It relies on the [`nsd-control`](https://nsd.docs.nlnetlabs.nl/en/latest/manpages/nsd-control.html) CLI tool but avoids directly executing the binary. Instead, it utilizes `ndsudo`, a Netdata helper specifically designed to run privileged commands securely within the Netdata environment. This approach eliminates the need to use `sudo`, improving security and potentially simplifying permission management.\nExecuted commands:\n- `nsd-control stats_noreset`\n\n\n\n\nThis collector is supported on all platforms.\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThis integration doesn't support auto-detection.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/nsd.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/nsd.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 10 | no |\n| timeout | nsd-control binary execution timeout. | 2 | no |\n\n{% /details %}\n#### Examples\n\n##### Custom update_every\n\nAllows you to override the default data collection interval.\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: nsd\n    update_every: 5  # Collect logical volume statistics every 5 seconds\n\n```\n{% /details %}\n",
+        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `nsd` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m nsd\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `nsd` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep nsd\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep nsd /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep nsd\n```\n\n",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per NSD instance\n\nThese metrics refer to the the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| nsd.queries | queries | queries/s |\n| nsd.queries_by_type | A, NS, MD, MF, CNAME, SOA, MB, MG, MR, NULL, WKS, PTR, HINFO, MINFO, MX, TXT, RP, AFSDB, X25, ISDN, RT, NSAP, SIG, KEY, PX, AAAA, LOC, NXT, SRV, NAPTR, KX, CERT, DNAME, OPT, APL, DS, SSHFP, IPSECKEY, RRSIG, NSEC, DNSKEY, DHCID, NSEC3, NSEC3PARAM, TLSA, SMIMEA, CDS, CDNSKEY, OPENPGPKEY, CSYNC, ZONEMD, SVCB, HTTPS, SPF, NID, L32, L64, LP, EUI48, EUI64, URI, CAA, AVC, DLV, IXFR, AXFR, MAILB, MAILA, ANY | queries/s |\n| nsd.queries_by_opcode | QUERY, IQUERY, STATUS, NOTIFY, UPDATE, OTHER | queries/s |\n| nsd.queries_by_class | IN, CS, CH, HS | queries/s |\n| nsd.queries_by_protocol | udp, udp6, tcp, tcp6, tls, tls6 | queries/s |\n| nsd.answers_by_rcode | NOERROR, FORMERR, SERVFAIL, NXDOMAIN, NOTIMP, REFUSED, YXDOMAIN, YXRRSET, NXRRSET, NOTAUTH, NOTZONE, RCODE11, RCODE12, RCODE13, RCODE14, RCODE15, BADVERS | answers/s |\n| nsd.errors | query, answer | errors/s |\n| nsd.drops | query | drops/s |\n| nsd.zones | master, slave | zones |\n| nsd.zone_transfers_requests | AXFR, IXFR | requests/s |\n| nsd.zone_transfer_memory | used | bytes |\n| nsd.database_size | disk, mem | bytes |\n| nsd.uptime | uptime | seconds |\n\n",
+        "integration_type": "collector",
+        "id": "go.d.plugin-nsd-NSD",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/plugin/go.d/modules/nsd/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
             "id": "collector-go.d.plugin-ntpd",
             "plugin_name": "go.d.plugin",
             "module_name": "ntpd",
@@ -19066,42 +19103,6 @@ export const integrations = [
         "integration_type": "collector",
         "id": "python.d.plugin-monit-Monit",
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/monit/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "python.d.plugin",
-            "module_name": "nsd",
-            "monitored_instance": {
-                "name": "Name Server Daemon",
-                "link": "https://nsd.docs.nlnetlabs.nl/en/latest/#",
-                "categories": [
-                    "data-collection.dns-and-dhcp-servers"
-                ],
-                "icon_filename": "nsd.svg"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "nsd",
-                "name server daemon"
-            ],
-            "most_popular": false
-        },
-        "overview": "# Name Server Daemon\n\nPlugin: python.d.plugin\nModule: nsd\n\n## Overview\n\nThis collector monitors NSD statistics like queries, zones, protocols, query types and more.\n\n\nIt uses the `nsd-control stats_noreset` command to gather metrics.\n\n\nThis collector is supported on all platforms.\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nIf permissions are satisfied, the collector will be able to run `nsd-control stats_noreset`, thus collecting metrics.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\n#### NSD version\n\nThe version of `nsd` must be 4.0+.\n\n\n#### Provide Netdata the permissions to run the command\n\nNetdata must have permissions to run the `nsd-control stats_noreset` command.\n\nYou can:\n\n- Add \"netdata\" user to \"nsd\" group:\n  ```\n  usermod -aG nsd netdata\n  ```\n- Add Netdata to sudoers\n  1. Edit the sudoers file:\n    ```\n    visudo -f /etc/sudoers.d/netdata\n    ```\n  2. Add the entry:\n    ```\n    Defaults:netdata   !requiretty\n    netdata ALL=(ALL)  NOPASSWD: /usr/sbin/nsd-control stats_noreset\n    ```\n\n  > Note that you will need to set the `command` option to `sudo /usr/sbin/nsd-control stats_noreset` if you use this method.\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/nsd.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/nsd.conf\n```\n#### Options\n\nThis particular collector does not need further configuration to work if permissions are satisfied, but you can always customize it's data collection behavior.\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.\n\nAdditionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Sets the default data collection frequency. | 30 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n| name | Job name. This value will overwrite the `job_name` value. JOBS with the same name are mutually exclusive. Only one of them will be allowed running at any time. This allows autodetection to try several alternatives and pick the one that works. |  | no |\n| command | The command to run | nsd-control stats_noreset | no |\n\n{% /details %}\n#### Examples\n\n##### Basic\n\nA basic configuration example.\n\n```yaml\nlocal:\n  name: 'nsd_local'\n  command: 'nsd-control stats_noreset'\n\n```\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `nsd` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin nsd debug trace\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `nsd` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep nsd\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep nsd /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep nsd\n```\n\n",
-        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Name Server Daemon instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| nsd.queries | queries | queries/s |\n| nsd.zones | master, slave | zones |\n| nsd.protocols | udp, udp6, tcp, tcp6 | queries/s |\n| nsd.type | A, NS, CNAME, SOA, PTR, HINFO, MX, NAPTR, TXT, AAAA, SRV, ANY | queries/s |\n| nsd.transfer | NOTIFY, AXFR | queries/s |\n| nsd.rcode | NOERROR, FORMERR, SERVFAIL, NXDOMAIN, NOTIMP, REFUSED, YXDOMAIN | queries/s |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-nsd-Name_Server_Daemon",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/nsd/metadata.yaml",
         "related_resources": ""
     },
     {
