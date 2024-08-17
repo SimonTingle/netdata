@@ -19300,42 +19300,6 @@ export const integrations = [
     {
         "meta": {
             "plugin_name": "python.d.plugin",
-            "module_name": "retroshare",
-            "monitored_instance": {
-                "name": "RetroShare",
-                "link": "https://retroshare.cc/",
-                "categories": [
-                    "data-collection.media-streaming-servers"
-                ],
-                "icon_filename": "retroshare.png"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "retroshare",
-                "p2p"
-            ],
-            "most_popular": false
-        },
-        "overview": "# RetroShare\n\nPlugin: python.d.plugin\nModule: retroshare\n\n## Overview\n\nThis collector monitors RetroShare statistics such as application bandwidth, peers, and DHT metrics.\n\nIt connects to the RetroShare web interface to gather metrics.\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThe collector will attempt to connect and detect a RetroShare web interface through http://localhost:9090, even without any configuration.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\n#### RetroShare web interface\n\nRetroShare needs to be configured to enable the RetroShare WEB Interface and allow access from the Netdata host.\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/retroshare.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/retroshare.conf\n```\n#### Options\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.\n\nAdditionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Sets the default data collection frequency. | 5 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n| name | Job name. This value will overwrite the `job_name` value. JOBS with the same name are mutually exclusive. Only one of them will be allowed running at any time. This allows autodetection to try several alternatives and pick the one that works. |  | no |\n| url | The URL to the RetroShare Web UI. | http://localhost:9090 | no |\n\n{% /details %}\n#### Examples\n\n##### Local RetroShare Web UI\n\nA basic configuration for a RetroShare server running on localhost.\n\n{% details open=true summary=\"Config\" %}\n```yaml\nlocalhost:\n name: 'local retroshare'\n url: 'http://localhost:9090'\n\n```\n{% /details %}\n##### Remote RetroShare Web UI\n\nA basic configuration for a remote RetroShare server.\n\n{% details open=true summary=\"Config\" %}\n```yaml\nremote:\n name: 'remote retroshare'\n url: 'http://1.2.3.4:9090'\n\n```\n{% /details %}\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `retroshare` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin retroshare debug trace\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `retroshare` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep retroshare\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep retroshare /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep retroshare\n```\n\n",
-        "alerts": "## Alerts\n\n\nThe following alerts are available:\n\n| Alert name  | On metric | Description |\n|:------------|:----------|:------------|\n| [ retroshare_dht_working ](https://github.com/netdata/netdata/blob/master/src/health/health.d/retroshare.conf) | retroshare.dht | number of DHT peers |\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per RetroShare instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| retroshare.bandwidth | Upload, Download | kilobits/s |\n| retroshare.peers | All friends, Connected friends | peers |\n| retroshare.dht | DHT nodes estimated, RS nodes estimated | peers |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-retroshare-RetroShare",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/retroshare/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "python.d.plugin",
             "module_name": "samba",
             "monitored_instance": {
                 "name": "Samba",
