@@ -16792,6 +16792,44 @@ export const integrations = [
     },
     {
         "meta": {
+            "id": "collector-go.d.plugin-tor",
+            "plugin_name": "go.d.plugin",
+            "module_name": "tor",
+            "monitored_instance": {
+                "name": "Tor",
+                "link": "https://www.torproject.org/",
+                "categories": [
+                    "data-collection.vpns"
+                ],
+                "icon_filename": "tor.svg"
+            },
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "keywords": [
+                "tor",
+                "traffic",
+                "vpn"
+            ],
+            "most_popular": false
+        },
+        "overview": "# Tor\n\nPlugin: go.d.plugin\nModule: tor\n\n## Overview\n\nTracks Tor's download and upload traffic, as well as its uptime.\n\n\nIt reads the server's response to the [GETINFO](https://spec.torproject.org/control-spec/commands.html#getinfo) command.\n\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nBy default, it detects Tor instances running on localhost that are listening on port 9051.\nOn startup, it tries to collect metrics from:\n\n- 127.0.0.1:9051\n\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\n#### Enable Control Port\n\nEnable `ControlPort` in `/etc/tor/torrc`.\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/tor.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/tor.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every, autodetection_retry.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 1 | no |\n| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | no |\n| address | The IP address and port where the Tor's Control Port listens for connections. | 127.0.0.1:9051 | yes |\n| timeout | Connection, read, and write timeout duration in seconds. The timeout includes name resolution. | 1 | no |\n| password | Password for authentication. |  | no |\n\n{% /details %}\n#### Examples\n\n##### Basic\n\nA basic example configuration.\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: local\n    address: 127.0.0.1:9051\n    password: somePassword\n\n```\n{% /details %}\n##### Multi-instance\n\n> **Note**: When you define multiple jobs, their names must be unique.\n\nCollecting metrics from local and remote instances.\n\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: local\n    address: 127.0.0.1:9051\n    password: somePassword\n\n  - name: remote\n    address: 203.0.113.0:9051\n    password: somePassword\n\n```\n{% /details %}\n",
+        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `tor` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m tor\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `tor` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep tor\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep tor /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep tor\n```\n\n",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Tor instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| tor.traffic | read, write | KiB/s |\n| tor.uptime | uptime | seconds |\n\n",
+        "integration_type": "collector",
+        "id": "go.d.plugin-tor-Tor",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/plugin/go.d/modules/tor/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
             "id": "collector-go.d.plugin-traefik",
             "plugin_name": "go.d.plugin",
             "module_name": "traefik",
@@ -19368,43 +19406,6 @@ export const integrations = [
         "integration_type": "collector",
         "id": "python.d.plugin-spigotmc-SpigotMC",
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/spigotmc/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "python.d.plugin",
-            "module_name": "tor",
-            "monitored_instance": {
-                "name": "Tor",
-                "link": "https://www.torproject.org/",
-                "categories": [
-                    "data-collection.vpns"
-                ],
-                "icon_filename": "tor.svg"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "tor",
-                "traffic",
-                "vpn"
-            ],
-            "most_popular": false
-        },
-        "overview": "# Tor\n\nPlugin: python.d.plugin\nModule: tor\n\n## Overview\n\nThis collector monitors Tor bandwidth traffic .\n\nIt connects to the Tor control port to collect traffic statistics.\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nIf no configuration is provided the collector will try to connect to 127.0.0.1:9051 to detect a running tor instance.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\n#### Required python module\n\nThe `stem` python library needs to be installed.\n\n\n#### Required Tor configuration\n\nAdd to /etc/tor/torrc:\n\nControlPort 9051\n\nFor more options please read the manual.\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/tor.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/tor.conf\n```\n#### Options\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.\n\nAdditionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Sets the default data collection frequency. | 5 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n| name | Job name. This value will overwrite the `job_name` value. JOBS with the same name are mutually exclusive. Only one of them will be allowed running at any time. This allows autodetection to try several alternatives and pick the one that works. |  | no |\n| control_addr | Tor control IP address | 127.0.0.1 | no |\n| control_port | Tor control port. Can be either a tcp port, or a path to a socket file. | 9051 | no |\n| password | Tor control password |  | no |\n\n{% /details %}\n#### Examples\n\n##### Local TCP\n\nA basic TCP configuration. `local_addr` is ommited and will default to `127.0.0.1`\n\n{% details open=true summary=\"Config\" %}\n```yaml\nlocal_tcp:\n name: 'local'\n control_port: 9051\n password: <password> # if required\n\n```\n{% /details %}\n##### Local socket\n\nA basic local socket configuration\n\n{% details open=true summary=\"Config\" %}\n```yaml\nlocal_socket:\n name: 'local'\n control_port: '/var/run/tor/control'\n password: <password> # if required\n\n```\n{% /details %}\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\nTo troubleshoot issues with the `tor` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin tor debug trace\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `tor` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep tor\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep tor /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep tor\n```\n\n",
-        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Tor instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| tor.traffic | read, write | KiB/s |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-tor-Tor",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/tor/metadata.yaml",
         "related_resources": ""
     },
     {
