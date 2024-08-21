@@ -18457,44 +18457,6 @@ export const integrations = [
     {
         "meta": {
             "plugin_name": "proc.plugin",
-            "module_name": "/proc/spl/kstat/zfs",
-            "monitored_instance": {
-                "name": "ZFS Pools",
-                "link": "",
-                "categories": [
-                    "data-collection.linux-systems.filesystem-metrics.zfs"
-                ],
-                "icon_filename": "filesystem.svg"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "zfs pools",
-                "pools",
-                "zfs",
-                "filesystem"
-            ],
-            "most_popular": false
-        },
-        "overview": "# ZFS Pools\n\nPlugin: proc.plugin\nModule: /proc/spl/kstat/zfs\n\n## Overview\n\nThis integration provides metrics about the state of ZFS pools.\n\n\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThis integration doesn't support auto-detection.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThere is no configuration file.\n#### Options\n\n\n\nThere are no configuration options.\n\n#### Examples\nThere are no configuration examples.\n\n",
-        "troubleshooting": "",
-        "alerts": "## Alerts\n\n\nThe following alerts are available:\n\n| Alert name  | On metric | Description |\n|:------------|:----------|:------------|\n| [ zfs_pool_state_warn ](https://github.com/netdata/netdata/blob/master/src/health/health.d/zfs.conf) | zfspool.state | ZFS pool ${label:pool} state is degraded |\n| [ zfs_pool_state_crit ](https://github.com/netdata/netdata/blob/master/src/health/health.d/zfs.conf) | zfspool.state | ZFS pool ${label:pool} state is faulted or unavail |\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per zfs pool\n\n\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| pool | TBD |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| zfspool.state | online, degraded, faulted, offline, removed, unavail, suspended | boolean |\n\n",
-        "integration_type": "collector",
-        "id": "proc.plugin-/proc/spl/kstat/zfs-ZFS_Pools",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/proc.plugin/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "proc.plugin",
             "module_name": "/proc/spl/kstat/zfs/arcstats",
             "monitored_instance": {
                 "name": "ZFS Adaptive Replacement Cache",
