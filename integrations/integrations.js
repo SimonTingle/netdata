@@ -16412,6 +16412,44 @@ export const integrations = [
     },
     {
         "meta": {
+            "id": "collector-go.d.plugin-samba",
+            "plugin_name": "go.d.plugin",
+            "module_name": "samba",
+            "monitored_instance": {
+                "name": "Samba",
+                "link": "https://www.samba.org/samba/",
+                "icon_filename": "samba.svg",
+                "categories": [
+                    "data-collection.storage-mount-points-and-filesystems"
+                ]
+            },
+            "keywords": [
+                "samba",
+                "smb",
+                "file sharing"
+            ],
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "most_popular": false
+        },
+        "overview": "# Samba\n\nPlugin: go.d.plugin\nModule: samba\n\n## Overview\n\nThis collector monitors Samba syscalls and SMB2 calls. It relies on the [`smbstatus`](https://www.samba.org/samba/docs/current/man-html/smbstatus.1.html) CLI tool but avoids directly executing the binary. Instead, it utilizes `ndsudo`, a Netdata helper specifically designed to run privileged commands securely within the Netdata environment. This approach eliminates the need to use `sudo`, improving security and potentially simplifying permission management.\nExecuted commands:\n- `smbstatus -P`\n\n\n\n\nThis collector is supported on all platforms.\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThis integration doesn't support auto-detection.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\n#### Verifying and Enabling Profiling for SMBd\n\n1. **Check for Profiling Support**\n\n    Before enabling profiling, it's important to verify if `smbd` was compiled with profiling capabilities. Run the following command as root user (using `sudo`) to check:\n\n    ```bash\n    $ sudo smbd --build-options | grep WITH_PROFILE\n    WITH_PROFILE\n    ```\n\n    If the command outputs `WITH_PROFILE`, profiling is supported. If not, you'll need to recompile `smbd` with profiling enabled (refer to Samba documentation for specific instructions).\n\n2. **Enable Profiling**\n\n    Once you've confirmed profiling support, you can enable it using one of the following methods:\n\n    - **Command-Line Option**\n        Start smbd with the `-P 1` option when invoking it directly from the command line.\n    - **Configuration File**\n        Modify the `smb.conf` configuration file located at `/etc/samba/smb.conf` (the path might vary slightly depending on your system). Add the following line to the `[global]` section:\n\n        ```bash\n        smbd profiling level = count\n        ```\n3. **Restart the Samba service**\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/samba.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/samba.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 10 | no |\n| timeout | smbstatus binary execution timeout. | 2 | no |\n\n{% /details %}\n#### Examples\n\n##### Custom update_every\n\nAllows you to override the default data collection interval.\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: samba\n    update_every: 5  # Collect statistics every 5 seconds\n\n```\n{% /details %}\n",
+        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\n**Important**: Debug mode is not supported for data collection jobs created via the UI using the Dyncfg feature.\n\nTo troubleshoot issues with the `samba` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m samba\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `samba` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep samba\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep samba /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep samba\n```\n\n",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per syscall\n\nThese metrics refer to the the Syscall.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| syscall | Syscall name |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| samba.syscall_calls | syscalls | calls/s |\n| samba.syscall_transferred_data | transferred | bytes/s |\n\n### Per smb2call\n\nThese metrics refer to the the SMB2 Call.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| smb2call | SMB2 call name |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| samba.smb2_call_calls | smb2 | calls/s |\n| samba.smb2_call_transferred_data | in, out | bytes/s |\n\n",
+        "integration_type": "collector",
+        "id": "go.d.plugin-samba-Samba",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/plugin/go.d/modules/samba/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
             "id": "collector-go.d.plugin-scaleio",
             "plugin_name": "go.d.plugin",
             "module_name": "scaleio",
@@ -19221,42 +19259,6 @@ export const integrations = [
         "integration_type": "collector",
         "id": "python.d.plugin-pandas-Pandas",
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/pandas/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "python.d.plugin",
-            "module_name": "samba",
-            "monitored_instance": {
-                "name": "Samba",
-                "link": "https://www.samba.org/samba/",
-                "categories": [
-                    "data-collection.storage-mount-points-and-filesystems"
-                ],
-                "icon_filename": "samba.svg"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "samba",
-                "file sharing"
-            ],
-            "most_popular": false
-        },
-        "overview": "# Samba\n\nPlugin: python.d.plugin\nModule: samba\n\n## Overview\n\nThis collector monitors the performance metrics of Samba file sharing.\n\nIt is using the `smbstatus` command-line tool.\n\nExecuted commands:\n\n- `sudo -n smbstatus -P`\n\n\nThis collector is supported on all platforms.\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n`smbstatus` is used, which can only be executed by `root`. It uses `sudo` and assumes that it is configured such that the `netdata` user can execute `smbstatus` as root without a password.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nAfter all the permissions are satisfied, the `smbstatus -P` binary is executed.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\n#### Enable the samba collector\n\nThe `samba` collector is disabled by default. To enable it, use `edit-config` from the Netdata [config directory](/docs/netdata-agent/configuration/README.md), which is typically at `/etc/netdata`, to edit the `python.d.conf` file.\n\n```bash\ncd /etc/netdata   # Replace this path with your Netdata config directory, if different\nsudo ./edit-config python.d.conf\n```\nChange the value of the `samba` setting to `yes`. Save the file and restart the Netdata Agent with `sudo systemctl restart netdata`, or the [appropriate method](/packaging/installer/README.md#maintaining-a-netdata-agent-installation) for your system.\n\n\n#### Permissions and programs\n\nTo run the collector you need:\n\n- `smbstatus` program\n- `sudo` program\n- `smbd` must be compiled with profiling enabled\n- `smbd` must be started either with the `-P 1` option or inside `smb.conf` using `smbd profiling level`\n\nThe module uses `smbstatus`, which can only be executed by `root`. It uses `sudo` and assumes that it is configured such that the `netdata` user can execute `smbstatus` as root without a password.\n\n- add to your `/etc/sudoers` file:\n\n  `which smbstatus` shows the full path to the binary.\n\n  ```bash\n  netdata ALL=(root)       NOPASSWD: /path/to/smbstatus\n  ```\n\n- Reset Netdata's systemd unit [CapabilityBoundingSet](https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Capabilities) (Linux distributions with systemd)\n\n  The default CapabilityBoundingSet doesn't allow using `sudo`, and is quite strict in general. Resetting is not optimal, but a next-best solution given the inability to execute `smbstatus` using `sudo`.\n\n\n  As the `root` user, do the following:\n\n  ```cmd\n  mkdir /etc/systemd/system/netdata.service.d\n  echo -e '[Service]\\nCapabilityBoundingSet=~' | tee /etc/systemd/system/netdata.service.d/unset-capability-bounding-set.conf\n  systemctl daemon-reload\n  systemctl restart netdata.service\n  ```\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/samba.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/samba.conf\n```\n#### Options\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.\n\nAdditionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Sets the default data collection frequency. | 5 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n\n{% /details %}\n#### Examples\n\n##### Basic\n\nA basic example configuration.\n\n{% details open=true summary=\"Config\" %}\n```yaml\nmy_job_name:\n  name: my_name\n  update_every: 1\n\n```\n{% /details %}\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\n\nTo troubleshoot issues with the `samba` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin samba debug trace\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `samba` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep samba\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep samba /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep samba\n```\n\n",
-        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Samba instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| syscall.rw | sendfile, recvfile | KiB/s |\n| smb2.rw | readout, writein, readin, writeout | KiB/s |\n| smb2.create_close | create, close | operations/s |\n| smb2.get_set_info | getinfo, setinfo | operations/s |\n| smb2.find | find | operations/s |\n| smb2.notify | notify | operations/s |\n| smb2.sm_counters | tcon, negprot, tdis, cancel, logoff, flush, lock, keepalive, break, sessetup | count |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-samba-Samba",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/samba/metadata.yaml",
         "related_resources": ""
     },
     {
