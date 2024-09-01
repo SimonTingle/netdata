@@ -21807,6 +21807,25 @@ export const integrations = [
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/health/notifications/gotify/metadata.yaml"
     },
     {
+        "id": "notify-ilert",
+        "meta": {
+            "name": "ilert",
+            "link": "https://www.ilert.com/",
+            "categories": [
+                "notify.agent"
+            ],
+            "icon_filename": "ilert.svg"
+        },
+        "keywords": [
+            "ilert"
+        ],
+        "overview": "# ilert\n\nilert is an alerting and incident management tool. It helps teams reduce response times by enhancing monitoring and ticketing tools with reliable alerts, automatic escalations, on-call schedules, and features for incident response, communication, and status updates.\nSending notification to ilert via Netdata's Agent alert notification feature includes links, images and resolving of corresponding alerts.\n\n",
+        "setup": "## Setup\n\n### Prerequisites\n\n#### \n\n- A Netdata alert source in ilert. You can create a [Netdata alert source](https://docs.ilert.com/inbound-integrations/netdata) in [ilert](https://www.ilert.com/).\n- Access to the terminal where Netdata Agent is running\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `health_alarm_notify.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config health_alarm_notify.conf\n```\n#### Options\n\nThe following options can be defined for this notification\n\n{% details open=true summary=\"Config Options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| SEND_ILERT | Set `SEND_ILERT` to YES | YES | yes |\n| ILERT_ALERT_SOURCE_URL | Set `ILERT_ALERT_SOURCE_URL` to your Netdata alert source url in ilert. |  | yes |\n\n{% /details %}\n#### Examples\n\n##### Basic Configuration\n\n\n\n```yaml\nSEND_ILERT=\"YES\"\nILERT_ALERT_SOURCE_URL=\"https://api.ilert.com/api/v1/events/netdata/{API-KEY}\"\n\n```\n",
+        "troubleshooting": "## Troubleshooting\n\n### Test Notification\n\nYou can run the following command by hand, to test alerts configuration:\n\n```bash\n# become user netdata\nsudo su -s /bin/bash netdata\n\n# enable debugging info on the console\nexport NETDATA_ALARM_NOTIFY_DEBUG=1\n\n# send test alarms to sysadmin\n/usr/libexec/netdata/plugins.d/alarm-notify.sh test\n\n# send test alarms to any role\n/usr/libexec/netdata/plugins.d/alarm-notify.sh test \"ROLE\"\n```\n\nNote that this will test _all_ alert mechanisms for the selected role.\n\n",
+        "integration_type": "notification",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/health/notifications/ilert/metadata.yaml"
+    },
+    {
         "id": "notify-irc",
         "meta": {
             "name": "IRC",
