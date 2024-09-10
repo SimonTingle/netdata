@@ -17014,6 +17014,46 @@ export const integrations = [
     },
     {
         "meta": {
+            "plugin_name": "go.d.plugin",
+            "module_name": "varnish",
+            "monitored_instance": {
+                "name": "Varnish",
+                "link": "https://varnish-cache.org/",
+                "categories": [
+                    "data-collection.web-servers-and-web-proxies"
+                ],
+                "icon_filename": "varnish.svg"
+            },
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "keywords": [
+                "varnish",
+                "varnishstat",
+                "varnishd",
+                "cache",
+                "web server",
+                "web cache"
+            ],
+            "most_popular": false
+        },
+        "overview": "# Varnish\n\nPlugin: go.d.plugin\nModule: varnish\n\n## Overview\n\nThis collector monitors Varnish instances, supporting both the open-source Varnish-Cache and the commercial Varnish-Plus.\n\nIt tracks key performance metrics, along with detailed statistics for Backends (VBE) and Storages (SMF, SMA, MSE).\n\nIt relies on the [`varnishstat`](https://varnish-cache.org/docs/trunk/reference/varnishstat.html) CLI tool but avoids directly executing the binary.\nInstead, it utilizes `ndsudo`, a Netdata helper specifically designed to run privileged commands securely within the Netdata environment.\nThis approach eliminates the need to use `sudo`, improving security and potentially simplifying permission management.\n\n\n\n\nThis collector is supported on all platforms.\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThis integration doesn't support auto-detection.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/varnish.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/varnish.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 10 | no |\n| timeout | Timeout for executing the binary, specified in seconds. | 2 | no |\n| instance_name | Specifies the name of the Varnish instance to collect metrics from. This corresponds to the `-n` argument used with the [varnishstat](https://varnish-cache.org/docs/trunk/reference/varnishstat.html) command. |  | no |\n\n{% /details %}\n#### Examples\n\n##### Custom update_every\n\nAllows you to override the default data collection interval.\n\n```yaml\njobs:\n  - name: varnish\n    update_every: 5\n\n```\n",
+        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\n**Important**: Debug mode is not supported for data collection jobs created via the UI using the Dyncfg feature.\n\nTo troubleshoot issues with the `varnish` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m varnish\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `varnish` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep varnish\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep varnish /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep varnish\n```\n\n",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Varnish instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| varnish.client_session_connections | accepted, dropped | connections/s |\n| varnish.client_requests | received | requests/s |\n| varnish.cache_hit_ratio_total | hit, miss, hitpass, hitmiss | percent |\n| varnish.cache_hit_ratio_delta | hit, miss, hitpass, hitmiss | percent |\n| varnish.cache_expired_objects | expired | objects/s |\n| varnish.cache_lru_activity | nuked, moved | objects/s |\n| varnish.threads | threads | threads |\n| varnish.thread_management_activity | created, failed, destroyed, limited | threads/s |\n| varnish.thread_queue_len | queue_length | threads |\n| varnish.backends_requests | sent | requests/s |\n| varnish.esi_parsing_issues | errors, warnings | issues/s |\n| varnish.mgmt_process_uptime | uptime | seconds |\n| varnish.child_process_uptime | uptime | seconds |\n\n### Per Backend\n\nThese metrics refer to the Backend (VBE).\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| varnish.backend_data_transfer | req_header, req_body, resp_header, resp_body | bytes/s |\n\n### Per Storage\n\nThese metrics refer to the Storage (SMA, SMF, MSE).\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| varnish.storage_space_usage | free, used | bytes |\n| varnish.storage_allocated_objects | allocated | objects |\n\n",
+        "integration_type": "collector",
+        "id": "go.d.plugin-varnish-Varnish",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/plugin/go.d/modules/varnish/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
             "id": "collector-go.d.plugin-vcsa",
             "plugin_name": "go.d.plugin",
             "module_name": "vcsa",
@@ -19292,46 +19332,6 @@ export const integrations = [
         "integration_type": "collector",
         "id": "python.d.plugin-spigotmc-SpigotMC",
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/spigotmc/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "python.d.plugin",
-            "module_name": "varnish",
-            "monitored_instance": {
-                "name": "Varnish",
-                "link": "https://varnish-cache.org/",
-                "categories": [
-                    "data-collection.web-servers-and-web-proxies"
-                ],
-                "icon_filename": "varnish.svg"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "varnish",
-                "varnishstat",
-                "varnishd",
-                "cache",
-                "web server",
-                "web cache"
-            ],
-            "most_popular": false
-        },
-        "overview": "# Varnish\n\nPlugin: python.d.plugin\nModule: varnish\n\n## Overview\n\nThis collector monitors Varnish metrics about HTTP accelerator global, Backends (VBE) and Storages (SMF, SMA, MSE) statistics.\n\nNote that both, Varnish-Cache (free and open source) and Varnish-Plus (Commercial/Enterprise version), are supported.\n\n\nIt uses the `varnishstat` tool in order to collect the metrics.\n\n\nThis collector is supported on all platforms.\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n`netdata` user must be a member of the `varnish` group.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nBy default, if the permissions are satisfied, the `varnishstat` tool will be executed on the host.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\n#### Provide the necessary permissions\n\nIn order for the collector to work, you need to add the `netdata` user to the `varnish` user group, so that it can execute the `varnishstat` tool:\n\n```\nusermod -aG varnish netdata\n```\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/varnish.conf`.\n\n\nYou can edit the configuration file using the `edit-config` script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/varnish.conf\n```\n#### Options\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.\n\nAdditionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| instance_name | the name of the varnishd instance to get logs from. If not specified, the local host name is used. |  | yes |\n| update_every | Sets the default data collection frequency. | 10 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n| name | Job name. This value will overwrite the `job_name` value. JOBS with the same name are mutually exclusive. Only one of them will be allowed running at any time. This allows autodetection to try several alternatives and pick the one that works. |  | no |\n\n{% /details %}\n#### Examples\n\n##### Basic\n\nAn example configuration.\n\n```yaml\njob_name:\n  instance_name: '<name-of-varnishd-instance>'\n\n```\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\n\nTo troubleshoot issues with the `varnish` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin varnish debug trace\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `varnish` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep varnish\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep varnish /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep varnish\n```\n\n",
-        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Varnish instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| varnish.session_connection | accepted, dropped | connections/s |\n| varnish.client_requests | received | requests/s |\n| varnish.all_time_hit_rate | hit, miss, hitpass | percentage |\n| varnish.current_poll_hit_rate | hit, miss, hitpass | percentage |\n| varnish.cached_objects_expired | objects | expired/s |\n| varnish.cached_objects_nuked | objects | nuked/s |\n| varnish.threads_total | None | number |\n| varnish.threads_statistics | created, failed, limited | threads/s |\n| varnish.threads_queue_len | in queue | requests |\n| varnish.backend_connections | successful, unhealthy, reused, closed, recycled, failed | connections/s |\n| varnish.backend_requests | sent | requests/s |\n| varnish.esi_statistics | errors, warnings | problems/s |\n| varnish.memory_usage | free, allocated | MiB |\n| varnish.uptime | uptime | seconds |\n\n### Per Backend\n\n\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| varnish.backend | header, body | kilobits/s |\n\n### Per Storage\n\n\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| varnish.storage_usage | free, allocated | KiB |\n| varnish.storage_alloc_objs | allocated | objects |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-varnish-Varnish",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/varnish/metadata.yaml",
         "related_resources": ""
     },
     {
