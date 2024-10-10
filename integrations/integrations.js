@@ -5732,7 +5732,7 @@ export const integrations = [
         "setup": "## Setup\n\n### Prerequisites\n\n#### Install nvme-cli\n\nSee [Distro Support](https://github.com/linux-nvme/nvme-cli#distro-support). Install `nvme-cli` using your distribution's package manager.\n\n\n#### For Netdata running in a Docker container: grant NVMe device access\n\nYour NVMe devices need to be accessible within the Docker container for Netdata to monitor them.\n\nInclude the following option in your `docker run` command or add the device mapping in your `docker-compose.yml` file:\n\n- `docker run`\n\n  ```bash\n  --device '/dev/nvme0n1:/dev/nvme0n1'\n  ```\n\n- `docker-compose.yml`\n\n  ```yaml\n  services:\n    netdata:\n      devices:\n        - \"/dev/nvme0n1:/dev/nvme0n1\"\n  ```\n\n**Note**: Replace `/dev/nvme0n1` with your actual NVMe device name.\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/nvme.conf`.\n\n\nYou can edit the configuration file using the [`edit-config`](/docs/netdata-agent/configuration/README.md#edit-a-configuration-file-using-edit-config) script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/nvme.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every, autodetection_retry.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 10 | no |\n| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | no |\n| timeout | nvme binary execution timeout. | 2 | no |\n\n{% /details %}\n#### Examples\n\n##### Custom update_every\n\nAllows you to override the default data collection interval.\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: nvme\n    update_every: 5  # Collect NVMe metrics every 5 seconds\n\n```\n{% /details %}\n",
         "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\n**Important**: Debug mode is not supported for data collection jobs created via the UI using the Dyncfg feature.\n\nTo troubleshoot issues with the `nvme` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m nvme\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `nvme` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep nvme\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep nvme /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep nvme\n```\n\n",
         "alerts": "## Alerts\n\n\nThe following alerts are available:\n\n| Alert name  | On metric | Description |\n|:------------|:----------|:------------|\n| [ nvme_device_critical_warnings_state ](https://github.com/netdata/netdata/blob/master/src/health/health.d/nvme.conf) | nvme.device_critical_warnings_state | NVMe device ${label:device} has critical warnings |\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per device\n\nThese metrics refer to the NVME device.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| device | NVMe device name |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| nvme.device_estimated_endurance_perc | used | % |\n| nvme.device_available_spare_perc | spare | % |\n| nvme.device_composite_temperature | temperature | celsius |\n| nvme.device_io_transferred_count | read, written | bytes |\n| nvme.device_power_cycles_count | power | cycles |\n| nvme.device_power_on_time | power-on | seconds |\n| nvme.device_critical_warnings_state | available_spare, temp_threshold, nvm_subsystem_reliability, read_only, volatile_mem_backup_failed, persistent_memory_read_only | state |\n| nvme.device_unsafe_shutdowns_count | unsafe | shutdowns |\n| nvme.device_media_errors_rate | media | errors/s |\n| nvme.device_error_log_entries_rate | error_log | entries/s |\n| nvme.device_warning_composite_temperature_time | wctemp | seconds |\n| nvme.device_critical_composite_temperature_time | cctemp | seconds |\n| nvme.device_thermal_mgmt_temp1_transitions_rate | temp1 | transitions/s |\n| nvme.device_thermal_mgmt_temp2_transitions_rate | temp2 | transitions/s |\n| nvme.device_thermal_mgmt_temp1_time | temp1 | seconds |\n| nvme.device_thermal_mgmt_temp2_time | temp2 | seconds |\n\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per device\n\nThese metrics refer to the NVME device.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| device | NVMe device name |\n| model_number | NVMe device model |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| nvme.device_estimated_endurance_perc | used | % |\n| nvme.device_available_spare_perc | spare | % |\n| nvme.device_composite_temperature | temperature | celsius |\n| nvme.device_io_transferred_count | read, written | bytes |\n| nvme.device_power_cycles_count | power | cycles |\n| nvme.device_power_on_time | power-on | seconds |\n| nvme.device_critical_warnings_state | available_spare, temp_threshold, nvm_subsystem_reliability, read_only, volatile_mem_backup_failed, persistent_memory_read_only | state |\n| nvme.device_unsafe_shutdowns_count | unsafe | shutdowns |\n| nvme.device_media_errors_rate | media | errors/s |\n| nvme.device_error_log_entries_rate | error_log | entries/s |\n| nvme.device_warning_composite_temperature_time | wctemp | seconds |\n| nvme.device_critical_composite_temperature_time | cctemp | seconds |\n| nvme.device_thermal_mgmt_temp1_transitions_rate | temp1 | transitions/s |\n| nvme.device_thermal_mgmt_temp2_transitions_rate | temp2 | transitions/s |\n| nvme.device_thermal_mgmt_temp1_time | temp1 | seconds |\n| nvme.device_thermal_mgmt_temp2_time | temp2 | seconds |\n\n",
         "integration_type": "collector",
         "id": "go.d.plugin-nvme-NVMe_devices",
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/plugin/go.d/modules/nvme/metadata.yaml",
@@ -16821,7 +16821,7 @@ export const integrations = [
         "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/storcli.conf`.\n\n\nYou can edit the configuration file using the [`edit-config`](/docs/netdata-agent/configuration/README.md#edit-a-configuration-file-using-edit-config) script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/storcli.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 10 | no |\n| timeout | storcli binary execution timeout. | 2 | no |\n\n{% /details %}\n#### Examples\n\n##### Custom update_every\n\nAllows you to override the default data collection interval.\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: storcli\n    update_every: 5  # Collect StorCLI RAID statistics every 5 seconds\n\n```\n{% /details %}\n",
         "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\n**Important**: Debug mode is not supported for data collection jobs created via the UI using the Dyncfg feature.\n\nTo troubleshoot issues with the `storcli` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m storcli\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `storcli` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep storcli\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep storcli /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep storcli\n```\n\n",
         "alerts": "## Alerts\n\n\nThe following alerts are available:\n\n| Alert name  | On metric | Description |\n|:------------|:----------|:------------|\n| [ storcli_controller_health_status ](https://github.com/netdata/netdata/blob/master/src/health/health.d/storcli.conf) | storcli.controller_health_status | RAID controller ${label:controller_number} is unhealthy |\n| [ storcli_controller_bbu_status ](https://github.com/netdata/netdata/blob/master/src/health/health.d/storcli.conf) | storcli.controller_bbu_status | RAID controller ${label:controller_number} BBU is unhealthy |\n| [ storcli_phys_drive_errors ](https://github.com/netdata/netdata/blob/master/src/health/health.d/storcli.conf) | storcli.phys_drive_errors | RAID physical drive c${label:controller_number}/e${label:enclosure_number}/s${label:slot_number} errors |\n| [ storcli_phys_drive_predictive_failures ](https://github.com/netdata/netdata/blob/master/src/health/health.d/storcli.conf) | storcli.phys_drive_predictive_failures | RAID physical drive c${label:controller_number}/e${label:enclosure_number}/s${label:slot_number} predictive failures |\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per controller\n\nThese metrics refer to the Controller.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| controller_number | Controller number (index) |\n| model | Controller model |\n| driver_name | Controller driver (megaraid_sas or mpt3sas) |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| storcli.controller_health_status | healthy, unhealthy | status |\n| storcli.controller_status | optimal, degraded, partially_degraded, failed | status |\n| storcli.controller_bbu_status | healthy, unhealthy, na | status |\n\n### Per physical drive\n\nThese metrics refer to the Physical Drive.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| controller_number | Controller number (index) |\n| enclosure_number | Enclosure number (index) |\n| slot_number | Slot number (index) |\n| media type | Media type (e.g. HDD) |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| storcli.phys_drive_errors | media, other | errors/s |\n| storcli.phys_drive_predictive_failures | predictive_failures | failures/s |\n| storcli.phys_drive_smart_alert_status | active, inactive | status |\n| storcli.phys_drive_temperature | temperature | Celsius |\n\n### Per bbu\n\nThese metrics refer to the Backup Battery Unit.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| controller_number | Controller number (index) |\n| bbu_number | BBU number (index) |\n| model | BBU model |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| storcli.bbu_temperature | temperature | Celsius |\n\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per controller\n\nThese metrics refer to the Controller.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| controller_number | Controller number (index) |\n| model | Controller model |\n| driver_name | Controller driver (megaraid_sas or mpt3sas) |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| storcli.controller_health_status | healthy, unhealthy | status |\n| storcli.controller_status | optimal, degraded, partially_degraded, failed | status |\n| storcli.controller_bbu_status | healthy, unhealthy, na | status |\n| storcli.controller_roc_temperature | temperature | Celsius |\n\n### Per physical drive\n\nThese metrics refer to the Physical Drive.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| controller_number | Controller number (index) |\n| enclosure_number | Enclosure number (index) |\n| slot_number | Slot number (index) |\n| media type | Media type (e.g. HDD) |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| storcli.phys_drive_errors | media, other | errors/s |\n| storcli.phys_drive_predictive_failures | predictive_failures | failures/s |\n| storcli.phys_drive_smart_alert_status | active, inactive | status |\n| storcli.phys_drive_temperature | temperature | Celsius |\n\n### Per bbu\n\nThese metrics refer to the Backup Battery Unit.\n\nLabels:\n\n| Label      | Description     |\n|:-----------|:----------------|\n| controller_number | Controller number (index) |\n| bbu_number | BBU number (index) |\n| model | BBU model |\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| storcli.bbu_temperature | temperature | Celsius |\n\n",
         "integration_type": "collector",
         "id": "go.d.plugin-storcli-StoreCLI_RAID",
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/plugin/go.d/modules/storcli/metadata.yaml",
@@ -19561,6 +19561,115 @@ export const integrations = [
     },
     {
         "meta": {
+            "plugin_name": "windows.plugin",
+            "module_name": "PerflibMemory",
+            "monitored_instance": {
+                "name": "Memory statistics",
+                "link": "https://learn.microsoft.com/en-us/windows/win32/Memory/memory-management",
+                "categories": [
+                    "data-collection.windows-systems"
+                ],
+                "icon_filename": "windows.svg"
+            },
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "keywords": [
+                "memory",
+                "swap"
+            ],
+            "most_popular": false
+        },
+        "overview": "# Memory statistics\n\nPlugin: windows.plugin\nModule: PerflibMemory\n\n## Overview\n\nThis collector monitors swap and memory pool statistics on Windows systems.\n\n\nIt queries for the 'Memory' object from Perflib in order to gather the metrics.\n\n\nThis collector is only supported on the following platforms:\n\n- windows\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThe collector automatically detects all of the metrics, no further configuration is required.\n\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `netdata.conf`.\nConfiguration for this specific integration is located in the `[plugin:windows]` section within that file.\n\nThe file format is a modified INI syntax. The general structure is:\n\n```ini\n[section1]\n    option1 = some value\n    option2 = some other value\n\n[section2]\n    option3 = some third value\n```\nYou can edit the configuration file using the [`edit-config`](/docs/netdata-agent/configuration/README.md#edit-a-configuration-file-using-edit-config) script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config netdata.conf\n```\n#### Options\n\n\n\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| PerflibMemory | An option to enable or disable the data collection. | yes | no |\n\n#### Examples\nThere are no configuration examples.\n\n",
+        "troubleshooting": "",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Memory statistics instance\n\nThese metrics refer to the entire monitored instance\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| mem.swap_iops | read, write | operations/s |\n| mem.swap_pages_io | read, write | pages/s |\n| mem.system_pool_size | paged, pool-paged | bytes |\n\n",
+        "integration_type": "collector",
+        "id": "windows.plugin-PerflibMemory-Memory_statistics",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/windows.plugin/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
+            "plugin_name": "windows.plugin",
+            "module_name": "PerflibProcesses",
+            "monitored_instance": {
+                "name": "System statistics",
+                "link": "https://learn.microsoft.com/en-us/windows/win32/procthread/processes-and-threads",
+                "categories": [
+                    "data-collection.windows-systems"
+                ],
+                "icon_filename": "windows.svg"
+            },
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "keywords": [
+                "process counts",
+                "threads",
+                "context switch"
+            ],
+            "most_popular": false
+        },
+        "overview": "# System statistics\n\nPlugin: windows.plugin\nModule: PerflibProcesses\n\n## Overview\n\nThis collector monitors the current number of processes, threads, and context switches on Windows systems.\n\n\nIt queries the 'System' object from Perflib in order to gather the metrics.\n\n\nThis collector is only supported on the following platforms:\n\n- windows\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThe collector automatically detects all of the metrics, no further configuration is required.\n\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `netdata.conf`.\nConfiguration for this specific integration is located in the `[plugin:windows]` section within that file.\n\nThe file format is a modified INI syntax. The general structure is:\n\n```ini\n[section1]\n    option1 = some value\n    option2 = some other value\n\n[section2]\n    option3 = some third value\n```\nYou can edit the configuration file using the [`edit-config`](/docs/netdata-agent/configuration/README.md#edit-a-configuration-file-using-edit-config) script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config netdata.conf\n```\n#### Options\n\n\n\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| PerflibProcesses | An option to enable or disable the data collection. | yes | no |\n\n#### Examples\nThere are no configuration examples.\n\n",
+        "troubleshooting": "",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per System statistics instance\n\nThese metrics refer to the entire monitored instance.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| system.processes | running | processes |\n| system.threads | threads | threads |\n| system.ctxt | switches | context switches/s |\n\n",
+        "integration_type": "collector",
+        "id": "windows.plugin-PerflibProcesses-System_statistics",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/windows.plugin/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
+            "plugin_name": "windows.plugin",
+            "module_name": "PerflibThermalZone",
+            "monitored_instance": {
+                "name": "System thermal zone",
+                "link": "https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/design-guide",
+                "categories": [
+                    "data-collection.windows-systems"
+                ],
+                "icon_filename": "windows.svg"
+            },
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "keywords": [
+                "thermal",
+                "temperature"
+            ],
+            "most_popular": false
+        },
+        "overview": "# System thermal zone\n\nPlugin: windows.plugin\nModule: PerflibThermalZone\n\n## Overview\n\nThis collector monitors thermal zone statistics on Windows systems.\n\n\nIt queries for the 'Thermal Zone Information' object from Perflib in order to gather the metrics.\n\n\nThis collector is only supported on the following platforms:\n\n- windows\n\nThis collector only supports collecting metrics from a single instance of this integration.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThe collector automatically detects all of the metrics, no further configuration is required.\n\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `netdata.conf`.\nConfiguration for this specific integration is located in the `[plugin:windows]` section within that file.\n\nThe file format is a modified INI syntax. The general structure is:\n\n```ini\n[section1]\n    option1 = some value\n    option2 = some other value\n\n[section2]\n    option3 = some third value\n```\nYou can edit the configuration file using the [`edit-config`](/docs/netdata-agent/configuration/README.md#edit-a-configuration-file-using-edit-config) script from the\nNetdata [config directory](/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config netdata.conf\n```\n#### Options\n\n\n\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| PerflibThermalZone | An option to enable or disable the data collection. | yes | no |\n\n#### Examples\nThere are no configuration examples.\n\n",
+        "troubleshooting": "",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per Thermal zone\n\nThese metrics refer to a Thermal zone\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| system.thermalzone_temperature | temperature | celsius |\n\n",
+        "integration_type": "collector",
+        "id": "windows.plugin-PerflibThermalZone-System_thermal_zone",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/windows.plugin/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
             "plugin_name": "xenstat.plugin",
             "module_name": "xenstat.plugin",
             "monitored_instance": {
@@ -19637,7 +19746,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "",
         "quick_start": -1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -19687,7 +19796,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 2 | Core | x86_64, aarch64 |  |\n| 2023 | Core | x86_64, aarch64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 2 | Core | x86_64, aarch64 |  |\n| 2023 | Core | x86_64, aarch64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": -1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -19737,7 +19846,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| latest | Intermediate |  |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| latest | Intermediate |  |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": -1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -19787,7 +19896,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 7 | Core | x86_64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 7 | Core | x86_64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": -1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -19837,7 +19946,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 9 | Community | x86_64, aarch64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 9 | Community | x86_64, aarch64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": -1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -19887,7 +19996,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 12 | Core | i386, amd64, armhf, arm64 |  |\n| 11 | Core | i386, amd64, armhf, arm64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 12 | Core | i386, amd64, armhf, arm64 |  |\n| 11 | Core | i386, amd64, armhf, arm64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": -1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -19952,7 +20061,7 @@ export const integrations = [
         ],
         "additional_info": "",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 19.03 or newer | Core | linux/i386, linux/amd64, linux/arm/v7, linux/arm64, linux/ppc64le |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 19.03 or newer | Core | linux/i386, linux/amd64, linux/arm/v7, linux/arm64, linux/ppc64le |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": 3,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -20002,7 +20111,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 40 | Core | x86_64, aarch64 |  |\n| 39 | Core | x86_64, aarch64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 40 | Core | x86_64, aarch64 |  |\n| 39 | Core | x86_64, aarch64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": -1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -20052,7 +20161,7 @@ export const integrations = [
         ],
         "additional_info": "Netdata can also be installed via [FreeBSD ports](https://www.freshports.org/net-mgmt/netdata).\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 13-STABLE | Community |  |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 13-STABLE | Community |  |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": 6,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -20104,7 +20213,7 @@ export const integrations = [
         "additional_info": "",
         "related_resources": {},
         "most_popular": true,
-        "platform_info": "\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "",
         "quick_start": 4,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -20154,7 +20263,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "",
         "quick_start": 1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -20193,7 +20302,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 13 | Community |  |  |\n| 12 | Community |  |  |\n| 11 | Community |  |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 13 | Community |  |  |\n| 12 | Community |  |  |\n| 11 | Community |  |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": 5,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -20243,7 +20352,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| latest | Intermediate |  |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| latest | Intermediate |  |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": -1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -20293,7 +20402,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 15.6 | Core | x86_64, aarch64 |  |\n| 15.5 | Core | x86_64, aarch64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 15.6 | Core | x86_64, aarch64 |  |\n| 15.5 | Core | x86_64, aarch64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": -1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -20343,7 +20452,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 8 | Core | x86_64, aarch64 |  |\n| 9 | Core | x86_64, aarch64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 8 | Core | x86_64, aarch64 |  |\n| 9 | Core | x86_64, aarch64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": -1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -20393,7 +20502,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 9.x | Core | x86_64, aarch64 |  |\n| 8.x | Core | x86_64, aarch64 |  |\n| 7.x | Core | x86_64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 9.x | Core | x86_64, aarch64 |  |\n| 8.x | Core | x86_64, aarch64 |  |\n| 7.x | Core | x86_64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": -1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -20443,7 +20552,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 9 | Core | x86_64, aarch64 |  |\n| 8 | Core | x86_64, aarch64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 9 | Core | x86_64, aarch64 |  |\n| 8 | Core | x86_64, aarch64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": -1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -20493,7 +20602,7 @@ export const integrations = [
         ],
         "additional_info": "Did you know you can also deploy Netdata on your OS using {% goToCategory navigateToSettings=$navigateToSettings categoryId=\"deploy.docker-kubernetes\" %}Kubernetes{% /goToCategory %} or {% goToCategory categoryId=\"deploy.docker-kubernetes\" %}Docker{% /goToCategory %}?\n",
         "related_resources": {},
-        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 24.04 | Core | amd64, armhf, arm64 |  |\n| 22.04 | Core | amd64, armhf, arm64 |  |\n| 20.04 | Core | amd64, armhf, arm64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "We build native packages for the following releases:\n\n| Version | Support Tier | Native Package Architectures | Notes |\n|:-------:|:------------:|:----------------------------:|:----- |\n| 24.04 | Core | amd64, armhf, arm64 |  |\n| 22.04 | Core | amd64, armhf, arm64 |  |\n| 20.04 | Core | amd64, armhf, arm64 |  |\n\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.\n",
         "quick_start": -1,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -20511,39 +20620,26 @@ export const integrations = [
         "keywords": [
             "windows"
         ],
-        "install_description": "1. Install [Windows Exporter](https://github.com/prometheus-community/windows_exporter) on every Windows host you want to monitor.\n2. Install Netdata agent on Linux, FreeBSD or Mac.\n3. Configure Netdata to collect data remotely from your Windows hosts by adding one job per host to windows.conf file. See the [configuration section](https://learn.netdata.cloud/docs/data-collection/monitor-anything/System%20Metrics/Windows-machines#configuration) for details.\n4. Enable [virtual nodes](https://learn.netdata.cloud/docs/data-collection/windows-systems#virtual-nodes) configuration so the windows nodes are displayed as separate nodes.\n",
+        "install_description": "Netdata offers a convenient Windows installer for easy setup. This executable provides two distinct installation modes, outlined below.\n\nThe Windows installer is currently under beta, and thus it is only available in the nightly release channel. A stable version will be released soon.\n\n## Graphical User Interface (GUI)\n\n1. Download the Netdata [Windows installer](https://github.com/netdata/netdata-nightlies/releases) from the latest nightly release.\n2. Run the `.exe` file and proceed with the installation process.\n3. At a minimum, you will need your Netdata Cloud Space's claim token to connect your Agent to your Space.\n\n## Silent Mode (Command line)\n\nIf you prefer to install Netdata through the command line, you can do so by running the following command on Windows Powershell with administrator rights.\n",
         "methods": [
             {
-                "method": "wget",
+                "method": "Silent Mode (Command line)",
                 "commands": [
                     {
-                        "channel": "nightly",
-                        "command": "wget -O /tmp/netdata-kickstart.sh https://get.netdata.cloud/kickstart.sh && sh /tmp/netdata-kickstart.sh --nightly-channel{% if $showClaimingOptions %} --claim-token {% claim_token %} --claim-rooms {% $claim_rooms %} --claim-url {% claim_url %}{% /if %}\n"
+                        "channel": "stable",
+                        "command": "$ProgressPreference = 'SilentlyContinue';\nInvoke-WebRequest https://github.com/netdata/netdata-nightlies/releases/latest/download/netdata-installer-x64.exe -OutFile \"netdata-installer-x64.exe\";\n.\\netdata-installer-x64.exe /S /A `\n{% if $showClaimingOptions %}/TOKEN={% claim_token %} /ROOMS={% $claim_rooms %}{% /if %}\n"
                     },
                     {
-                        "channel": "stable",
-                        "command": "wget -O /tmp/netdata-kickstart.sh https://get.netdata.cloud/kickstart.sh && sh /tmp/netdata-kickstart.sh --stable-channel{% if $showClaimingOptions %} --claim-token {% claim_token %} --claim-rooms {% $claim_rooms %} --claim-url {% claim_url %}{% /if %}\n"
-                    }
-                ]
-            },
-            {
-                "method": "curl",
-                "commands": [
-                    {
                         "channel": "nightly",
-                        "command": "curl https://get.netdata.cloud/kickstart.sh > /tmp/netdata-kickstart.sh && sh /tmp/netdata-kickstart.sh --nightly-channel{% if $showClaimingOptions %} --claim-token {% claim_token %} --claim-rooms {% $claim_rooms %} --claim-url {% claim_url %}{% /if %}\n"
-                    },
-                    {
-                        "channel": "stable",
-                        "command": "curl https://get.netdata.cloud/kickstart.sh > /tmp/netdata-kickstart.sh && sh /tmp/netdata-kickstart.sh --stable-channel{% if $showClaimingOptions %} --claim-token {% claim_token %} --claim-rooms {% $claim_rooms %} --claim-url {% claim_url %}{% /if %}\n"
+                        "command": "$ProgressPreference = 'SilentlyContinue';\nInvoke-WebRequest https://github.com/netdata/netdata-nightlies/releases/latest/download/netdata-installer-x64.exe -OutFile \"netdata-installer-x64.exe\";\n.\\netdata-installer-x64.exe /S /A `\n{% if $showClaimingOptions %}/TOKEN={% claim_token %} /ROOMS={% $claim_rooms %}{% /if %}\n"
                     }
                 ]
             }
         ],
-        "additional_info": "",
+        "additional_info": "### Available Options\n\n| Option    | Description                                                                                      |\n|-----------|--------------------------------------------------------------------------------------------------|\n| `/S`      | Enables silent mode installation.                                                                |\n| `/A`      | Accepts all Netdata licenses. This option is mandatory for silent installations.                 |\n| `/D`      | Specifies the desired installation directory (defaults to `C:\\Program Files\\Netdata`).           |\n| `/T`      | Opens the `MSYS2` terminal after installation.                                                   |\n| `/I`      | Forces insecure connections, bypassing hostname verification (use only if absolutely necessary). |\n| `/TOKEN=` | Sets the Claim Token for your Netdata Cloud Space.                                               |\n| `/ROOMS=` | Comma-separated list of Room IDs where you want your node to appear.                             |\n| `/PROXY=` | Sets the proxy server address if your network requires one.                                      |\n",
         "related_resources": {},
         "most_popular": true,
-        "platform_info": "\nOn other releases of this distribution, a static binary will be installed in `/opt/netdata`.",
+        "platform_info": "",
         "quick_start": 2,
         "integration_type": "deploy",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/deploy.yaml"
@@ -21550,6 +21646,25 @@ export const integrations = [
         ],
         "overview": "# Discord\n\nFrom the Netdata Cloud UI, you can manage your space's notification settings and enable the configuration to deliver notifications on Discord.\n",
         "setup": "## Setup\n\n### Prerequisites\n- A Netdata Cloud account\n- Access to the Netdata Space as an **Admin**\n- You need to have a Discord server able to receive webhooks integrations.\n\n### Discord Server Configuration\nSteps to configure your Discord server to receive [webhook notifications](https://support.discord.com/hc/en-us/articles/228383668) from Netdata:\n1. Go to `Server Settings` --> `Integrations`\n2. **Create Webhook** or **View Webhooks** if you already have some defined\n3. Specify the **Name** and **Channel** on your new webhook\n4. Use Webhook URL to add your notification configuration on Netdata UI\n\n### Netdata Configuration Steps\n1. Click on the **Space settings** cog (located above your profile icon)\n2. Click on the **Notification** tab\n3. Click on the **+ Add configuration** button (near the top-right corner of your screen)\n4. On the **Discord** card click on **+ Add**\n5. A modal will be presented to you to enter the required details to enable the configuration:\n  * **Notification settings** are Netdata specific settings\n    - Configuration name - you can optionally provide a name for your configuration you can easily refer to it\n    - Rooms - by specifying a list of Rooms you are select to which nodes or areas of your infrastructure you want to be notified using this configuration\n    - Notification - you specify which notifications you want to be notified using this configuration: All Alerts and unreachable, All Alerts, Critical only\n  * **Integration configuration** are the specific notification integration required settings, which vary by notification method. For Discord:\n    - Define the type channel you want to send notifications to: **Text channel** or **Forum channel**\n    - Webhook URL - URL provided on Discord for the channel you want to receive your notifications.\n    - Thread name - if the Discord channel is a **Forum channel** you will need to provide the thread name as well\n\n",
+        "integration_type": "notification",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/cloud-notifications/metadata.yaml",
+        "troubleshooting": ""
+    },
+    {
+        "id": "notify-cloud-ilert",
+        "meta": {
+            "name": "Ilert",
+            "link": "https://www.ilert.com/",
+            "categories": [
+                "notify.cloud"
+            ],
+            "icon_filename": "ilert.svg"
+        },
+        "keywords": [
+            "ilert"
+        ],
+        "overview": "# Ilert\n\nFrom the Cloud interface, you can manage your space's notification settings and from there you can add a specific configuration to get notifications delivered on ilert.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\nTo add ilert notification you need:\n\n- A Netdata Cloud account\n- Access to the space as an **Admin**\n- The Space needs to be on a paid plan\n- You need to have permissions on ilert to add new Alert sources.\n\n### Settings on ilert\n\n1. **Access the Alert sources Settings**: From the navigation bar, open the Alert sources drop down and click \"Alert sources\".\n2. **Create a New Alert source**: Click on the \"+ Create a new alert source\" button.\n3. **Configure an Alert source**:\n  - select \"API integration\" and click Next\n  - provide a name that suits the source's purpose, for example Netdata\n  - select Escalation policy\n  - select Alert grouping (optional)\n  - review all configurations and click \"Finish setup\"\n4. **Obtain the API Key**:\n  - Once the Alert source is created, you will be provided with an API key.\n  - Copy this API Key, as it will be required to configure the integration on Netdata Cloud.\n\n### Settings on Netdata Cloud\n\n1. Click on the **Space settings** cog (located above your profile icon)\n2. Click on the **Alerts & Notifications** tab\n3. Click on the **+ Add configuration** button\n4. Click on **+ Add** on the **ilert** card \n5. A modal will be presented in order to enter the required details to enable the configuration:\n\n- **Notification settings** are Netdata specific settings\n    - Configuration name: provide a descriptive name for your configuration to easily identify it.\n    - Rooms: select the nodes or areas of your infrastructure you want to receive notifications about.\n    - Notification: choose the type of notifications you want to receive.\n  - **Integration configuration** are the required integration settings, which vary by notification method. For ilert:\n    - Alert Source API key.\n\n",
         "integration_type": "notification",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/cloud-notifications/metadata.yaml",
         "troubleshooting": ""
