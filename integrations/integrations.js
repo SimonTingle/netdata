@@ -21653,7 +21653,7 @@ export const integrations = [
     {
         "id": "notify-cloud-ilert",
         "meta": {
-            "name": "Ilert",
+            "name": "ilert",
             "link": "https://www.ilert.com/",
             "categories": [
                 "notify.cloud"
@@ -21663,7 +21663,7 @@ export const integrations = [
         "keywords": [
             "ilert"
         ],
-        "overview": "# Ilert\n\nYou can configure notification delivery to ilert from the Netdata Cloud UI.\n",
+        "overview": "# ilert\n\nYou can configure notification delivery to ilert from the Netdata Cloud UI.\n",
         "setup": "## Setup\n\n### Prerequisites\n\n- A Netdata Cloud account\n- Access to the Space as an **Admin**\n- The Space needs to be on a paid plan\n- You need to have permissions on ilert to add new Alert sources.\n\n### ilert Configuration\n\n1. From the navigation bar, open the Alert sources drop down and click \"Alert sources\"\n2. Click on the \"+ Create a new alert source\" button\n3. Configure an Alert source:\n    - Select \"API integration\" and click Next\n    - Provide a name that suits the source's purpose, for example \"Netdata\"\n    - Select Escalation policy\n    - Select Alert grouping (optional)\n4. Obtain the API Key:\n    - Once the Alert source is created, you will be provided with an API key. Copy it in order to add it to your integration configuration in the Netdata Cloud UI\n\n### Netdata Configuration\n\n1. Click on the **Space settings** cog (located above your profile icon)\n2. Click on the **Alerts & Notifications** tab\n3. Click on the **+ Add configuration** button\n4. Add the ilert Integration\n5. A modal will be presented to you to enter the required details to enable the integration:\n    - **Notification settings**\n      - Configuration name (optional): A name for your configuration in order to easily refer to it\n      - Rooms: A list of Rooms for which you want to be notified\n      - Notifications: The notifications which you want to be notified\n    - **Integration configuration**\n      - Alert Source API key: The key you copied in the ilert configuration step.\n\n",
         "integration_type": "notification",
         "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/cloud-notifications/metadata.yaml",
