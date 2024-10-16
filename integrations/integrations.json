@@ -22330,6 +22330,26 @@
             "troubleshooting": ""
         },
         {
+            "id": "logs-systemd-journal",
+            "meta": {
+                "name": "Systemd Journal Logs",
+                "link": "https://github.com/netdata/netdata/blob/master/src/collectors/systemd-journal.plugin/README.md",
+                "categories": [
+                    "logs"
+                ],
+                "icon_filename": "netdata.png"
+            },
+            "keywords": [
+                "systemd",
+                "journal",
+                "logs"
+            ],
+            "overview": "# Systemd Journal Logs\n\nThe `systemd` journal plugin by Netdata makes viewing, exploring and analyzing `systemd` journal logs simple and efficient.\n\nIt automatically discovers available journal sources, allows advanced filtering, offers interactive visual representations and supports exploring the logs of both individual servers and the logs on infrastructure wide journal centralization servers.\n\nThe plugin automatically detects the available journal sources, based on the journal files available in `/var/log/journal` (persistent logs) and `/run/log/journal` (volatile logs).\n\n\n## Visualization\n\nYou can start exploring `systemd` journal logs on the \"Logs\" tab of the Netdata UI.\n\n\n## Key features\n\n- Works on both **individual servers** and **journal centralization servers**.\n- Supports `persistent` and `volatile` journals.\n- Supports `system`, `user`, `namespaces` and `remote` journals.\n- Allows filtering on **any journal field** or **field value**, for any time-frame.\n- Allows **full text search** (`grep`) on all journal fields, for any time-frame.\n- Provides a **histogram** for log entries over time, with a break down per field-value, for any field and any time-frame.\n- Works directly on journal files, without any other third-party components.\n- Supports coloring log entries, the same way `journalctl` does.\n- In PLAY mode provides the same experience as `journalctl -f`, showing new log entries immediately after they are received.\n",
+            "setup": "## Setup\n\n## Prerequisites\n\n- A Netdata Cloud account\n\n\n## Configuration\n\nThere is no configuration needed for this integration.\n",
+            "integration_type": "logs",
+            "edit_link": "https://github.com/netdata/netdata/blob/master/integrations/logs/metadata.yaml"
+        },
+        {
             "id": "oidc-authentication",
             "meta": {
                 "name": "OIDC",
