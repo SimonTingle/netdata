@@ -16757,6 +16757,44 @@ export const integrations = [
     },
     {
         "meta": {
+            "id": "collector-go.d.plugin-spigotmc",
+            "plugin_name": "go.d.plugin",
+            "module_name": "spigotmc",
+            "monitored_instance": {
+                "name": "SpigotMC",
+                "link": "https://www.spigotmc.org/",
+                "categories": [
+                    "data-collection.gaming"
+                ],
+                "icon_filename": "spigot.jfif"
+            },
+            "related_resources": {
+                "integrations": {
+                    "list": []
+                }
+            },
+            "info_provided_to_referring_integrations": {
+                "description": ""
+            },
+            "keywords": [
+                "minecraft",
+                "spigotmc",
+                "spigot"
+            ],
+            "most_popular": false
+        },
+        "overview": "# SpigotMC\n\nPlugin: go.d.plugin\nModule: spigotmc\n\n## Overview\n\nThis collector monitors SpigotMC server server performance, in the form of ticks per second average, memory utilization, and active users.\n\n\nIt sends the `tps` and `list` commands to the Server, and gathers the metrics from the responses.\n\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nBy default, it detects SpigotMC instances running on localhost that are listening on port 25575.\n\n> **Note that the SpigotMC RCON API requires a password**. \n> While Netdata can automatically detect SpigotMC instances and create data collection jobs, these jobs will fail unless you provide the necessary credentials.\n\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
+        "setup": "## Setup\n\n### Prerequisites\n\nNo action required.\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `go.d/spigotmc.conf`.\n\n\nYou can edit the configuration file using the [`edit-config`](https://github.com/netdata/netdata/blob/master/docs/netdata-agent/configuration/README.md#edit-a-configuration-file-using-edit-config) script from the\nNetdata [config directory](https://github.com/netdata/netdata/blob/master/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config go.d/spigotmc.conf\n```\n#### Options\n\nThe following options can be defined globally: update_every, autodetection_retry.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Data collection frequency. | 1 | no |\n| autodetection_retry | Recheck interval in seconds. Zero means no recheck will be scheduled. | 0 | no |\n| address | The IP address and port where the SpigotMC server listens for RCON connections. | 127.0.0.1:25575 | yes |\n| timeout | Connection, read, and write timeout duration in seconds. The timeout includes name resolution. | 1 | no |\n\n{% /details %}\n#### Examples\n\n##### Basic\n\nA basic example configuration.\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: local\n    address: 127.0.0.1:25575\n    password: somePassword\n\n```\n{% /details %}\n##### Multi-instance\n\n> **Note**: When you define multiple jobs, their names must be unique.\n\nCollecting metrics from local and remote instances.\n\n\n{% details open=true summary=\"Config\" %}\n```yaml\njobs:\n  - name: local\n    address: 127.0.0.1:25575\n    password: somePassword\n\n  - name: remote\n    address: 203.0.113.0:25575\n    password: somePassword\n\n```\n{% /details %}\n",
+        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\n**Important**: Debug mode is not supported for data collection jobs created via the UI using the Dyncfg feature.\n\nTo troubleshoot issues with the `spigotmc` collector, run the `go.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `go.d.plugin` to debug the collector:\n\n  ```bash\n  ./go.d.plugin -d -m spigotmc\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `spigotmc` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep spigotmc\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep spigotmc /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep spigotmc\n```\n\n",
+        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
+        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per SpigotMC instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| spigotmc.players | players | players |\n| spigotmc.avg_tps | 1min, 5min, 15min | ticks |\n| spigotmc.memory | used, alloc | bytes |\n\n",
+        "integration_type": "collector",
+        "id": "go.d.plugin-spigotmc-SpigotMC",
+        "edit_link": "https://github.com/netdata/netdata/blob/master/src/go/plugin/go.d/modules/spigotmc/metadata.yaml",
+        "related_resources": ""
+    },
+    {
+        "meta": {
             "id": "collector-go.d.plugin-squid",
             "plugin_name": "go.d.plugin",
             "module_name": "squid",
@@ -19416,43 +19454,6 @@ export const integrations = [
         "integration_type": "collector",
         "id": "python.d.plugin-pandas-Pandas",
         "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/pandas/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
-            "plugin_name": "python.d.plugin",
-            "module_name": "spigotmc",
-            "monitored_instance": {
-                "name": "SpigotMC",
-                "link": "",
-                "categories": [
-                    "data-collection.gaming"
-                ],
-                "icon_filename": "spigot.jfif"
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "minecraft server",
-                "spigotmc server",
-                "spigot"
-            ],
-            "most_popular": false
-        },
-        "overview": "# SpigotMC\n\nPlugin: python.d.plugin\nModule: spigotmc\n\n## Overview\n\nThis collector monitors SpigotMC server performance, in the form of ticks per second average, memory utilization, and active users.\n\n\nIt sends the `tps`, `list` and `online` commands to the Server, and gathers the metrics from the responses.\n\n\nThis collector is only supported on the following platforms:\n\n- Linux\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nBy default, this collector will attempt to connect to a Spigot server running on the local host on port `25575`.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\n#### Enable the Remote Console Protocol\n\nUnder your SpigotMC server's `server.properties` configuration file, you should set `enable-rcon` to `true`.\n\nThis will allow the Server to listen and respond to queries over the rcon protocol.\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/spigotmc.conf`.\n\n\nYou can edit the configuration file using the [`edit-config`](https://github.com/netdata/netdata/blob/master/docs/netdata-agent/configuration/README.md#edit-a-configuration-file-using-edit-config) script from the\nNetdata [config directory](https://github.com/netdata/netdata/blob/master/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/spigotmc.conf\n```\n#### Options\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.\n\nAdditionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| update_every | Sets the default data collection frequency. | 1 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n| name | Job name. This value will overwrite the `job_name` value. JOBS with the same name are mutually exclusive. Only one of them will be allowed running at any time. This allows autodetection to try several alternatives and pick the one that works. |  | no |\n| host | The host's IP to connect to. | localhost | yes |\n| port | The port the remote console is listening on. | 25575 | yes |\n| password | Remote console password if any. |  | no |\n\n{% /details %}\n#### Examples\n\n##### Basic\n\nA basic configuration example.\n\n```yaml\nlocal:\n  name: local_server\n  url: 127.0.0.1\n  port: 25575\n\n```\n##### Basic Authentication\n\nAn example using basic password for authentication with the remote console.\n\n{% details open=true summary=\"Config\" %}\n```yaml\nlocal:\n  name: local_server_pass\n  url: 127.0.0.1\n  port: 25575\n  password: 'foobar'\n\n```\n{% /details %}\n##### Multi-instance\n\n> **Note**: When you define multiple jobs, their names must be unique.\n\nCollecting metrics from local and remote instances.\n\n\n{% details open=true summary=\"Config\" %}\n```yaml\nlocal_server:\n  name : my_local_server\n  url  : 127.0.0.1\n  port: 25575\n\nremote_server:\n  name : another_remote_server\n  url  : 192.0.2.1\n  port: 25575\n\n```\n{% /details %}\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\n\nTo troubleshoot issues with the `spigotmc` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin spigotmc debug trace\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `spigotmc` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep spigotmc\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep spigotmc /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep spigotmc\n```\n\n",
-        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per SpigotMC instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| spigotmc.tps | 1 Minute Average, 5 Minute Average, 15 Minute Average | ticks |\n| spigotmc.users | Users | users |\n| spigotmc.mem | used, allocated, max | MiB |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-spigotmc-SpigotMC",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/spigotmc/metadata.yaml",
         "related_resources": ""
     },
     {
