@@ -19458,46 +19458,6 @@ export const integrations = [
     },
     {
         "meta": {
-            "plugin_name": "python.d.plugin",
-            "module_name": "zscores",
-            "monitored_instance": {
-                "name": "python.d zscores",
-                "link": "https://en.wikipedia.org/wiki/Standard_score",
-                "categories": [
-                    "data-collection.other"
-                ],
-                "icon_filename": ""
-            },
-            "related_resources": {
-                "integrations": {
-                    "list": []
-                }
-            },
-            "info_provided_to_referring_integrations": {
-                "description": ""
-            },
-            "keywords": [
-                "zscore",
-                "z-score",
-                "standard score",
-                "standard deviation",
-                "anomaly detection",
-                "statistical anomaly detection"
-            ],
-            "most_popular": false
-        },
-        "overview": "# python.d zscores\n\nPlugin: python.d.plugin\nModule: zscores\n\n## Overview\n\nBy using smoothed, rolling [Z-Scores](https://en.wikipedia.org/wiki/Standard_score) for selected metrics or charts you can narrow down your focus and shorten root cause analysis.\n\n\nThis collector uses the [Netdata rest api](https://github.com/netdata/netdata/blob/master/src/web/api/README.md) to get the `mean` and `stddev`\nfor each dimension on specified charts over a time range (defined by `train_secs` and `offset_secs`).\n\nFor each dimension it will calculate a Z-Score as `z = (x - mean) / stddev` (clipped at `z_clip`). Scores are then smoothed over\ntime (`z_smooth_n`) and, if `mode: 'per_chart'`, aggregated across dimensions to a smoothed, rolling chart level Z-Score at each time step.\n\n\nThis collector is supported on all platforms.\n\nThis collector supports collecting metrics from multiple instances of this integration, including remote instances.\n\n\n### Default Behavior\n\n#### Auto-Detection\n\nThis integration doesn't support auto-detection.\n\n#### Limits\n\nThe default configuration for this integration does not impose any limits on data collection.\n\n#### Performance Impact\n\nThe default configuration for this integration is not expected to impose a significant performance impact on the system.\n",
-        "setup": "## Setup\n\n### Prerequisites\n\n#### Python Requirements\n\nThis collector will only work with Python 3 and requires the below packages be installed.\n\n```bash\n# become netdata user\nsudo su -s /bin/bash netdata\n# install required packages\npip3 install numpy pandas requests netdata-pandas==0.0.38\n```\n\n\n\n### Configuration\n\n#### File\n\nThe configuration file name for this integration is `python.d/zscores.conf`.\n\n\nYou can edit the configuration file using the [`edit-config`](https://github.com/netdata/netdata/blob/master/docs/netdata-agent/configuration/README.md#edit-a-configuration-file-using-edit-config) script from the\nNetdata [config directory](https://github.com/netdata/netdata/blob/master/docs/netdata-agent/configuration/README.md#the-netdata-config-directory).\n\n```bash\ncd /etc/netdata 2>/dev/null || cd /opt/netdata/etc/netdata\nsudo ./edit-config python.d/zscores.conf\n```\n#### Options\n\nThere are 2 sections:\n\n* Global variables\n* One or more JOBS that can define multiple different instances to monitor.\n\nThe following options can be defined globally: priority, penalty, autodetection_retry, update_every, but can also be defined per JOB to override the global values.\n\nAdditionally, the following collapsed table contains all the options that can be configured inside a JOB definition.\n\nEvery configuration JOB starts with a `job_name` value which will appear in the dashboard, unless a `name` parameter is specified.\n\n\n{% details open=true summary=\"Config options\" %}\n| Name | Description | Default | Required |\n|:----|:-----------|:-------|:--------:|\n| charts_regex | what charts to pull data for - A regex like `system\\..*/` or `system\\..*/apps.cpu/apps.mem` etc. | system\\..* | yes |\n| train_secs | length of time (in seconds) to base calculations off for mean and stddev. | 14400 | yes |\n| offset_secs | offset (in seconds) preceding latest data to ignore when calculating mean and stddev. | 300 | yes |\n| train_every_n | recalculate the mean and stddev every n steps of the collector. | 900 | yes |\n| z_smooth_n | smooth the z score (to reduce sensitivity to spikes) by averaging it over last n values. | 15 | yes |\n| z_clip | cap absolute value of zscore (before smoothing) for better stability. | 10 | yes |\n| z_abs | set z_abs: 'true' to make all zscores be absolute values only. | true | yes |\n| burn_in | burn in period in which to initially calculate mean and stddev on every step. | 2 | yes |\n| mode | mode can be to get a zscore 'per_dim' or 'per_chart'. | per_chart | yes |\n| per_chart_agg | per_chart_agg is how you aggregate from dimension to chart when mode='per_chart'. | mean | yes |\n| update_every | Sets the default data collection frequency. | 5 | no |\n| priority | Controls the order of charts at the netdata dashboard. | 60000 | no |\n| autodetection_retry | Sets the job re-check interval in seconds. | 0 | no |\n| penalty | Indicates whether to apply penalty to update_every in case of failures. | yes | no |\n\n{% /details %}\n#### Examples\n\n##### Default\n\nDefault configuration.\n\n```yaml\nlocal:\n  name: 'local'\n  host: '127.0.0.1:19999'\n  charts_regex: 'system\\..*'\n  charts_to_exclude: 'system.uptime'\n  train_secs: 14400\n  offset_secs: 300\n  train_every_n: 900\n  z_smooth_n: 15\n  z_clip: 10\n  z_abs: 'true'\n  burn_in: 2\n  mode: 'per_chart'\n  per_chart_agg: 'mean'\n\n```\n",
-        "troubleshooting": "## Troubleshooting\n\n### Debug Mode\n\n\nTo troubleshoot issues with the `zscores` collector, run the `python.d.plugin` with the debug option enabled. The output\nshould give you clues as to why the collector isn't working.\n\n- Navigate to the `plugins.d` directory, usually at `/usr/libexec/netdata/plugins.d/`. If that's not the case on\n  your system, open `netdata.conf` and look for the `plugins` setting under `[directories]`.\n\n  ```bash\n  cd /usr/libexec/netdata/plugins.d/\n  ```\n\n- Switch to the `netdata` user.\n\n  ```bash\n  sudo -u netdata -s\n  ```\n\n- Run the `python.d.plugin` to debug the collector:\n\n  ```bash\n  ./python.d.plugin zscores debug trace\n  ```\n\n### Getting Logs\n\nIf you're encountering problems with the `zscores` collector, follow these steps to retrieve logs and identify potential issues:\n\n- **Run the command** specific to your system (systemd, non-systemd, or Docker container).\n- **Examine the output** for any warnings or error messages that might indicate issues.  These messages should provide clues about the root cause of the problem.\n\n#### System with systemd\n\nUse the following command to view logs generated since the last Netdata service restart:\n\n```bash\njournalctl _SYSTEMD_INVOCATION_ID=\"$(systemctl show --value --property=InvocationID netdata)\" --namespace=netdata --grep zscores\n```\n\n#### System without systemd\n\nLocate the collector log file, typically at `/var/log/netdata/collector.log`, and use `grep` to filter for collector's name:\n\n```bash\ngrep zscores /var/log/netdata/collector.log\n```\n\n**Note**: This method shows logs from all restarts. Focus on the **latest entries** for troubleshooting current issues.\n\n#### Docker Container\n\nIf your Netdata runs in a Docker container named \"netdata\" (replace if different), use this command:\n\n```bash\ndocker logs netdata 2>&1 | grep zscores\n```\n\n",
-        "alerts": "## Alerts\n\nThere are no alerts configured by default for this integration.\n",
-        "metrics": "## Metrics\n\nMetrics grouped by *scope*.\n\nThe scope defines the instance that the metric belongs to. An instance is uniquely identified by a set of labels.\n\n\n\n### Per python.d zscores instance\n\nThese metrics refer to the entire monitored application.\n\nThis scope has no labels.\n\nMetrics:\n\n| Metric | Dimensions | Unit |\n|:------|:----------|:----|\n| zscores.z | a dimension per chart or dimension | z |\n| zscores.3stddev | a dimension per chart or dimension | count |\n\n",
-        "integration_type": "collector",
-        "id": "python.d.plugin-zscores-python.d_zscores",
-        "edit_link": "https://github.com/netdata/netdata/blob/master/src/collectors/python.d.plugin/zscores/metadata.yaml",
-        "related_resources": ""
-    },
-    {
-        "meta": {
             "plugin_name": "slabinfo.plugin",
             "module_name": "slabinfo.plugin",
             "monitored_instance": {
