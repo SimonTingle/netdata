@@ -20629,11 +20629,11 @@ export const integrations = [
                 "commands": [
                     {
                         "channel": "stable",
-                        "command": "$ProgressPreference = 'SilentlyContinue';\nInvoke-WebRequest https://github.com/netdata/netdata/releases/latest/download/netdata-x64.msi -OutFile \"netdata-x64.msi\";\nmsiexec /qn /i netdata-x64.msi {% if $showClaimingOptions %}TOKEN={% claim_token %} ROOMS={% $claim_rooms %}{% /if %}\n"
+                        "command": "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest https://github.com/netdata/netdata/releases/latest/download/netdata-x64.msi -OutFile \"netdata-x64.msi\"; msiexec /qn /i netdata-x64.msi {% if $showClaimingOptions %}TOKEN={% claim_token %} ROOMS={% $claim_rooms %}{% /if %}\n"
                     },
                     {
                         "channel": "nightly",
-                        "command": "$ProgressPreference = 'SilentlyContinue';\nInvoke-WebRequest https://github.com/netdata/netdata-nightlies/releases/latest/download/netdata-x64.msi -OutFile \"netdata-x64.msi\";\n.\\msiexec /qn /i netdata-x64.msi {% if $showClaimingOptions %}/TOKEN={% claim_token %} /ROOMS={% $claim_rooms %}{% /if %}\n"
+                        "command": "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest https://github.com/netdata/netdata-nightlies/releases/latest/download/netdata-x64.msi -OutFile \"netdata-x64.msi\"; msiexec /qn /i netdata-x64.msi {% if $showClaimingOptions %}/TOKEN={% claim_token %} /ROOMS={% $claim_rooms %}{% /if %}\n"
                     }
                 ]
             }
