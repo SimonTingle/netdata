@@ -19754,7 +19754,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": false,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
@@ -19804,7 +19804,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": false,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
@@ -19854,7 +19854,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": false,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
@@ -19904,7 +19904,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": false,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
@@ -19954,7 +19954,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": false,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
@@ -20004,7 +20004,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": false,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
@@ -20119,7 +20119,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": false,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
@@ -20271,7 +20271,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": true,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
@@ -20360,7 +20360,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": false,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
@@ -20410,7 +20410,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": false,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
@@ -20460,7 +20460,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": false,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
@@ -20510,7 +20510,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": false,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
@@ -20560,7 +20560,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": false,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
@@ -20610,7 +20610,7 @@ export const integrations = [
             "linux"
         ],
         "most_popular": false,
-        "install_description": "Run the following command on your node to install and claim Netdata:",
+        "install_description": "Run the following command on your node to install and connnect Netdata to your Space:",
         "methods": [
             {
                 "method": "wget",
